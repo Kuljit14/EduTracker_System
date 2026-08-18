@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduTrack | Student Progress Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="Style.css">
+  <script src="Script.js" defer></script>
+</head>
+
+<body>
+  <section class="login-screen" id="login-screen">
+    <div class="login-panel">
+      <div class="brand login-brand"><div class="brand-mark">✦</div><span>EduTrack</span></div>
+      <p class="login-kicker">LEARNING PORTAL</p>
+      <h1>Welcome back</h1>
+      <p class="login-sub">Sign in to access your learning workspace.</p>
+      <div class="login-role-switch" aria-label="Choose your portal">
+        <button class="active" type="button" data-login-role="student">Student</button>
+        <button type="button" data-login-role="teacher">Teacher</button>
+      </div>
+      <form id="login-form">
+        <label for="login-name">Your name</label>
+        <input id="login-name" type="text" value="Aanya Sharma" autocomplete="name" required>
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" placeholder="Enter your password" required>
+        <button class="login-button" type="submit">Sign in as student</button>
+      </form>
+      <p class="login-note">Demo portal — use any password to continue.</p>
+    </div>
+  </section>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">✦</div><span>EduTrack</span>
+      </div>
+      <div class="switch"><button class="active" data-role-switch="student">Student</button><button
+          data-role-switch="teacher">Teacher</button></div>
+      <div class="nav-label">Workspace</div>
+      <nav class="nav"><button class="active" data-page="dashboard"><span>▦</span><span>Dashboard</span></button><button
+          data-page="courses"><span>▤</span><span>My Courses</span></button><button
+          data-page="calendar"><span>◷</span><span>Attendance</span></button><button
+          data-page="results"><span>◈</span><span>Results</span></button></nav>
+      <div class="nav-label teacher-only" style="display:none">Teacher tools</div>
+      <nav class="nav teacher-only" style="display:none"><button
+          data-page="students"><span>♙</span><span>Students</span></button><button
+          data-page="reports"><span>◫</span><span>Reports</span></button><button
+          data-page="topic-manager"><span>☷</span><span>Manage Topics</span></button></nav>
+      <nav class="nav teacher-only" style="display:none"><button
+          data-page="schedule-manager"><span>◷</span><span>Class Schedule</span></button></nav>
+      <div class="help"><b>Need assistance?</b>Talk to the institute office for account or course support.<br><a
+          href="#">Contact support →</a></div>
+    </aside>
+    <main>
+      <header class="top">
+        <div>
+          <div class="crumb" id="crumb">Student portal / Overview</div>
+          <h1 id="title">Good morning, Aanya!</h1>
+        </div>
+        <div class="top-actions"><button class="logout-button" id="logout-button">Log out</button><button class="bell">♧</button>
+          <div class="avatar" id="avatar">AS</div>
+        </div>
+      </header>
+      <section id="dashboard" class="page active student-page">
+        <div class="hero">
+          <div>
+            <h2>Keep up the brilliant work!</h2>
+            <p>You have completed 72% of this month’s learning plan.</p>
+          </div>
+          <div class="hero-chip"><strong>8.6 / 10</strong><span>Overall average</span></div>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-head"><label>Overall Progress</label>
+              <div class="ico">↗</div>
+            </div><strong>72%</strong><small>+8% from last month</small>
+          </div>
+          <div class="metric">
+            <div class="metric-head"><label>Attendance</label>
+              <div class="ico">✓</div>
+            </div><strong>94%</strong><small>Excellent attendance</small>
+          </div>
+          <div class="metric">
+            <div class="metric-head"><label>Assignments</label>
+              <div class="ico">▣</div>
+            </div><strong>18 / 22</strong><small class="neutral">4 submissions pending</small>
+          </div>
+          <div class="metric">
+            <div class="metric-head"><label>Next Assessment</label>
+              <div class="ico">◷</div>
+            </div><strong>24 Aug</strong><small class="neutral">Computer Fundamentals</small>
+          </div>
+        </div>
+        <article class="card today-class-card">
+          <div class="section-row"><div><h3 class="card-title">Today’s classes</h3><p class="card-sub">Your teacher’s scheduled lessons for today.</p></div><button class="link" data-page="courses">Open courses</button></div>
+          <div id="student-schedule"></div>
+        </article>
+        <div class="dashboard-grid">
+          <article class="card">
+            <div class="section-row">
+              <div>
+                <h3 class="card-title">Course progress</h3>
+                <p class="card-sub">Your current learning journey</p>
+              </div><button class="link" data-page="courses">View all</button>
+            </div>
+            <div id="dashboard-course-list"></div>
+          </article>
+          <article class="card">
+            <h3 class="card-title">Weekly engagement</h3>
+            <p class="card-sub">Study time over the last 7 days</p>
+            <div class="chart">
+              <div class="bar-wrap">
+                <div class="bar" style="height:42%"></div><span>Mon</span>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar" style="height:62%"></div><span>Tue</span>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar" style="height:49%"></div><span>Wed</span>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar" style="height:75%"></div><span>Thu</span>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar current" style="height:92%"></div><span>Fri</span>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar" style="height:35%"></div><span>Sat</span>
+              </div>
+              <div class="bar-wrap">
+                <div class="bar" style="height:21%"></div><span>Sun</span>
+              </div>
+            </div>
+            <div class="legend"><span><i class="dot"></i>This week</span><span><i class="dot gray"></i>Previous
+                pattern</span></div>
+            <div class="notice"><b>Upcoming:</b> Your MS Excel practical assessment is scheduled for 24 August, 10:00
+              AM.</div>
+          </article>
+        </div>
+      </section>
+      <section id="courses" class="page student-page">
+        <div class="card">
+          <h3 class="card-title">My courses</h3>
+          <p class="card-sub">Select a course to see your completed, current, and upcoming topics.</p>
+          <div id="course-list"></div>
+        </div>
+      </section>
+      <section id="course-detail" class="page student-page">
+        <button class="back-link" data-page="courses">← Back to my courses</button>
+        <div id="course-detail-content"></div>
+      </section>
+      <section id="calendar" class="page student-page">
+        <div class="card">
+          <h3 class="card-title">Attendance record</h3>
+          <p class="card-sub">August 2026 · 17 sessions attended out of 18</p>
+          <div class="chart" style="height:220px">
+            <div class="bar-wrap">
+              <div class="bar current" style="height:90%"></div><span>Week 1</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar current" style="height:100%"></div><span>Week 2</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar current" style="height:100%"></div><span>Week 3</span>
+            </div>
+            <div class="bar-wrap">
+              <div class="bar" style="height:45%"></div><span>Week 4</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="results" class="page student-page">
+        <div class="card table-card">
+          <div class="table-top">
+            <div>
+              <h3 class="card-title">Assessment results</h3>
+              <p class="card-sub">Your most recent marked assessments</p>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Assessment</th>
+                <th>Course</th>
+                <th>Score</th>
+                <th>Grade</th>
+                <th>Feedback</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Excel formulas test</td>
+                <td>DCA</td>
+                <td>88 / 100</td>
+                <td><span class="badge">A</span></td>
+                <td class="last">Great spreadsheet logic!</td>
+              </tr>
+              <tr>
+                <td>Algebra Unit 3</td>
+                <td>Mathematics</td>
+                <td>76 / 100</td>
+                <td><span class="badge">B+</span></td>
+                <td class="last">Revise quadratic equations.</td>
+              </tr>
+              <tr>
+                <td>Speaking activity</td>
+                <td>English</td>
+                <td>91 / 100</td>
+                <td><span class="badge">A+</span></td>
+                <td class="last">Clear and confident delivery.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="students" class="page teacher-page">
+        <div class="teacher-summary">
+          <div class="summary"><span>Total active students</span><strong>126</strong></div>
+          <div class="summary"><span>Average attendance</span><strong>91%</strong></div>
+          <div class="summary"><span>Attention needed</span><strong style="color:var(--orange)">8</strong></div>
+        </div>
+        <div class="card table-card">
+          <div class="table-top">
+            <div>
+              <h3 class="card-title">Student progress</h3>
+              <p class="card-sub">Monitor current course performance</p>
+            </div>
+            <div class="filters"><input class="search" id="search" placeholder="Search student..."><select
+                class="select" id="course-filter">
+                <option>All courses</option>
+                <option>DCA</option>
+                <option>Mathematics</option>
+              </select></div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Progress</th>
+                <th>Attendance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="student-table"></tbody>
+          </table>
+        </div>
+      </section>
+      <section id="student-detail" class="page teacher-page">
+        <button class="back-link" data-page="students">← Back to students</button>
+        <div class="topic-manager-grid">
+          <article class="card">
+            <h3 class="card-title" id="student-detail-title">Student details</h3>
+            <p class="card-sub">Changes on this page apply only to this student.</p>
+            <form id="student-detail-form" class="detail-form">
+              <input type="hidden" id="detail-student-id">
+              <label class="field-label" for="detail-student-name">Student name</label>
+              <input class="form-input" id="detail-student-name" required>
+              <label class="field-label" for="detail-attendance">Attendance</label>
+              <input class="form-input" id="detail-attendance" type="number" min="0" max="100" required>
+              <label class="field-label">Assigned courses</label>
+              <div class="enrollment-list" id="detail-enrollments"></div>
+              <button class="confirm-button" type="submit">Save student changes</button>
+            </form>
+          </article>
+          <article class="card">
+            <h3 class="card-title">Individual schedule override</h3>
+            <p class="card-sub">Overrides only this student. The course schedule remains unchanged for everyone else.</p>
+            <form id="student-override-form" class="detail-form">
+              <label class="field-label" for="override-course">Course</label>
+              <select class="select manager-select" id="override-course"></select>
+              <label class="field-label" for="override-day">Class day</label>
+              <select class="select manager-select" id="override-day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+              <label class="field-label" for="override-time">Class time</label>
+              <input class="form-input" id="override-time" type="time" required>
+              <button class="confirm-button" type="submit">Save individual schedule</button>
+              <button class="secondary-button" id="clear-override" type="button">Use course schedule again</button>
+            </form>
+          </article>
+        </div>
+      </section>
+      <section id="reports" class="page teacher-page">
+        <div class="dashboard-grid">
+          <article class="card">
+            <h3 class="card-title">Class performance</h3>
+            <p class="card-sub">Average score by course</p>
+            <div class="course">
+              <div class="course-row"><b>Diploma in Computer Applications</b><b>84%</b></div>
+              <div class="progress"><i style="width:84%"></i></div>
+            </div>
+            <div class="course">
+              <div class="course-row"><b>Mathematics — Class 10</b><b>73%</b></div>
+              <div class="progress"><i style="width:73%"></i></div>
+            </div>
+            <div class="course">
+              <div class="course-row"><b>English Communication</b><b>88%</b></div>
+              <div class="progress"><i style="width:88%"></i></div>
+            </div>
+          </article>
+          <article class="card">
+            <h3 class="card-title">Report actions</h3>
+            <p class="card-sub">Create and share progress reports with parents.</p><button
+              style="background:var(--blue);color:#fff;border:0;border-radius:9px;padding:11px 15px;font:700 13px 'DM Sans';cursor:pointer">Generate
+              monthly report</button>
+            <div class="notice" style="margin-top:22px"><b>8 students</b> need a follow-up because their attendance or
+              progress is below the expected level.</div>
+          </article>
+        </div>
+        <article class="card" style="margin-top:23px">
+          <h3 class="card-title">Latest student learning confirmations</h3>
+          <p class="card-sub">Read the topics students finished and their comments about each class.</p>
+          <div class="confirmation-list" id="teacher-confirmations"></div>
+        </article>
+      </section>
+      <section id="topic-manager" class="page teacher-page">
+        <div class="topic-manager-grid">
+          <article class="card">
+            <h3 class="card-title">Manage course topics</h3>
+            <p class="card-sub">Add, review, or remove topics that students see in their course plan.</p>
+            <label class="field-label" for="teacher-course">Course</label>
+            <select class="select manager-select" id="teacher-course"></select>
+            <div class="teacher-topic-list" id="teacher-topic-list"></div>
+          </article>
+          <article class="card add-topic-card">
+            <h3 class="card-title">Add a topic</h3>
+            <p class="card-sub">Choose where the topic should appear in the student’s course path.</p>
+            <form id="add-topic-form">
+              <label class="field-label" for="topic-name">Topic name</label>
+              <input class="form-input" id="topic-name" required placeholder="Example: Excel pivot tables">
+              <label class="field-label" for="topic-description">What will students learn?</label>
+              <textarea class="form-input" id="topic-description" required placeholder="Brief description of the methods or skills."></textarea>
+              <label class="field-label" for="topic-status">Topic status</label>
+              <select class="select manager-select" id="topic-status">
+                <option value="upcoming">Upcoming</option>
+                <option value="current">Current topic</option>
+                <option value="completed">Completed</option>
+              </select>
+              <button class="confirm-button" type="submit">Add topic</button>
+            </form>
+          </article>
+        </div>
+        <div class="topic-manager-grid manager-bottom">
+          <article class="card add-topic-card">
+            <h3 class="card-title">Course information</h3>
+            <p class="card-sub">Shared details visible to every student enrolled in this course.</p>
+            <form id="course-settings-form">
+              <label class="field-label" for="course-description">Description</label>
+              <textarea class="form-input" id="course-description"></textarea>
+              <label class="field-label" for="course-announcement">Course announcement</label>
+              <textarea class="form-input" id="course-announcement"></textarea>
+              <label class="field-label" for="course-day">Default class day</label>
+              <select class="select manager-select" id="course-day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+              <label class="field-label" for="course-time">Default class time</label>
+              <input class="form-input" id="course-time" type="time" required>
+              <button class="confirm-button" type="submit">Save course changes</button>
+            </form>
+          </article>
+          <article class="card">
+            <div class="section-row"><div><h3 class="card-title">Batch students</h3><p class="card-sub" id="enrollment-count"></p></div></div>
+            <input class="search manager-search" id="batch-search" placeholder="Search students...">
+            <div class="enrollment-list" id="batch-enrolled-list"></div>
+            <button class="secondary-button" id="remove-enrolled" type="button">Remove selected from course</button>
+            <p class="card-sub" style="margin-top:20px">Available students</p>
+            <div class="enrollment-list" id="batch-available-list"></div>
+            <button class="confirm-button" id="add-enrolled" type="button">Add selected students</button>
+          </article>
+        </div>
+      </section>
+      <section id="schedule-manager" class="page teacher-page">
+        <div class="topic-manager-grid">
+          <article class="card">
+            <h3 class="card-title">Class schedule</h3>
+            <p class="card-sub">These lessons are shown to students in their dashboard and course pages.</p>
+            <div class="teacher-schedule-list" id="teacher-schedule-list"></div>
+          </article>
+          <article class="card add-topic-card">
+            <h3 class="card-title">Schedule a class</h3>
+            <p class="card-sub">Set the course, topic, date, and time for your next lesson.</p>
+            <form id="add-schedule-form">
+              <label class="field-label" for="schedule-course">Course</label>
+              <select class="select manager-select" id="schedule-course"></select>
+              <label class="field-label" for="schedule-topic">Topic</label>
+              <select class="select manager-select" id="schedule-topic"></select>
+              <label class="field-label" for="schedule-date">Class date</label>
+              <input class="form-input" id="schedule-date" type="date" required>
+              <label class="field-label" for="schedule-time">Class time</label>
+              <input class="form-input" id="schedule-time" type="time" value="10:00" required>
+              <button class="confirm-button" type="submit">Add to schedule</button>
+            </form>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+</body>
+
+</html>
