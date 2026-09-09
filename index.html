@@ -17,36 +17,178 @@
 
 <body>
   <section class="login-screen" id="login-screen">
-    <div class="login-bg-shapes">
-      <div class="login-orb orb-1"></div>
-      <div class="login-orb orb-2"></div>
-      <div class="login-orb orb-3"></div>
-    </div>
-    <div class="login-panel" id="login-card">
-      <div class="brand login-brand">
-        <img src="logo.jpg" alt="AIMT Logo" class="brand-logo login-logo">
-        <span>AIMT Tracker</span>
+    <div class="login-container">
+      <!-- Left Column: Official Institutional Hero Showcase (Desktop & Tablet) -->
+      <div class="login-showcase">
+        <div class="showcase-glow glow-1"></div>
+        <div class="showcase-glow glow-2"></div>
+        <div class="showcase-content">
+          <div class="showcase-brand">
+            <img src="logo.jpg" alt="AIMT Logo" class="showcase-logo">
+            <div>
+              <span class="showcase-inst-kicker">AIMT ACADEMIC SUITE</span>
+              <h2 class="showcase-inst-title">Ambition Institute of Management &amp; Technology</h2>
+            </div>
+          </div>
+
+          <div class="showcase-hero-copy">
+            <span class="showcase-badge">OFFICIAL LEARNING PORTAL</span>
+            <h1 class="showcase-heading">Smart Learning &amp; Real-Time Academic Tracking</h1>
+            <p class="showcase-sub">
+              An integrated institutional system engineered for students and faculty to monitor curriculum roadmaps, track syllabus completion, and streamline academic achievements.
+            </p>
+          </div>
+
+          <div class="showcase-feature-list">
+            <div class="showcase-feature-card">
+              <div class="feature-icon">🎓</div>
+              <div>
+                <strong>Verified Syllabus &amp; Topics</strong>
+                <p>Structured modular roadmaps with live milestones and lesson progress.</p>
+              </div>
+            </div>
+            <div class="showcase-feature-card">
+              <div class="feature-icon">📊</div>
+              <div>
+                <strong>Continuous Assessment</strong>
+                <p>Real-time attendance metrics, topic confirmations, and grade summaries.</p>
+              </div>
+            </div>
+            <div class="showcase-feature-card">
+              <div class="feature-icon">🔔</div>
+              <div>
+                <strong>Instant Campus Bulletins</strong>
+                <p>Direct notice board updates from the Dean’s desk and faculty administration.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="showcase-footer">
+            <span>🔒 ISO / 256-Bit Encrypted Academic Portal</span>
+            <span>&bull;</span>
+            <span>Accredited Technical Education</span>
+          </div>
+        </div>
       </div>
-      <p class="login-kicker">AMBITION INSTITUTE OF MANAGEMENT & TECHNOLOGY</p>
-      <h1>Welcome back</h1>
-      <p class="login-sub">Sign in to access your learning workspace.</p>
-      <div class="login-role-switch" aria-label="Choose your portal">
-        <button class="active" type="button" data-login-role="student">Student</button>
-        <button type="button" data-login-role="teacher">Teacher</button>
-      </div>
-      <div class="login-alert" id="login-alert" style="display:none;"></div>
-      <form id="login-form">
-        <label for="login-name" id="login-name-label">Student ID or Full Name</label>
-        <input id="login-name" type="text" placeholder="e.g. STU-001 or Student Name" autocomplete="username" required>
-        <label for="login-password">Password</label>
-        <input id="login-password" type="password" placeholder="Enter password" autocomplete="current-password" required>
-        <button class="login-button" id="login-submit-btn" type="submit">
-          <span id="login-btn-text">Sign in as student</span>
-        </button>
-      </form>
-      <div class="login-credentials-hint">
-        <div><strong>Default Student:</strong> <code>STU-001</code> &bull; <code>aimt@123</code></div>
-        <div style="margin-top:2px;"><strong>Default Teacher:</strong> <code>TEACHER</code> &bull; <code>aimt@teacher</code></div>
+
+      <!-- Right Column: Standardized Enterprise Sign-In Card -->
+      <div class="login-form-wrapper">
+        <div class="login-card" id="login-card">
+          <!-- Mobile-only brand header -->
+          <div class="mobile-login-brand">
+            <img src="logo.jpg" alt="AIMT Logo" class="mobile-login-logo">
+            <div>
+              <div class="mobile-login-title">AIMT Tracker</div>
+              <div class="mobile-login-sub">Ambition Institute of Management &amp; Tech</div>
+            </div>
+          </div>
+
+          <div class="login-header">
+            <h2 class="login-title">Sign In</h2>
+            <p class="login-subtitle">Select your role and enter your institutional credentials.</p>
+          </div>
+
+          <!-- Segmented Portal Switcher -->
+          <div class="login-role-selector" role="tablist" aria-label="Portal Role Selector">
+            <button class="role-tab-btn active" type="button" data-login-role="student" role="tab" aria-selected="true">
+              <span class="role-tab-icon">🎓</span>
+              <span>Student Portal</span>
+            </button>
+            <button class="role-tab-btn" type="button" data-login-role="teacher" role="tab" aria-selected="false">
+              <span class="role-tab-icon">👨‍🏫</span>
+              <span>Faculty Portal</span>
+            </button>
+          </div>
+
+          <div class="login-alert" id="login-alert" style="display:none;" role="alert"></div>
+
+          <form id="login-form" novalidate>
+            <!-- Identifier field -->
+            <div class="form-group">
+              <label class="form-label" for="login-name" id="login-name-label">Student ID or Full Name</label>
+              <div class="input-container">
+                <span class="input-icon" aria-hidden="true">👤</span>
+                <input
+                  class="standard-input"
+                  id="login-name"
+                  type="text"
+                  placeholder="e.g. STU-001 or Student Name"
+                  autocomplete="username"
+                  autocapitalize="none"
+                  enterkeyhint="next"
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Password field with Show/Hide toggle -->
+            <div class="form-group" style="margin-top: 14px;">
+              <div class="form-label-row">
+                <label class="form-label" for="login-password">Password</label>
+                <span class="default-cred-hint-text">Default: <code>aimt@123</code> / <code>aimt@teacher</code></span>
+              </div>
+              <div class="input-container">
+                <span class="input-icon" aria-hidden="true">🔒</span>
+                <input
+                  class="standard-input has-toggle"
+                  id="login-password"
+                  type="password"
+                  placeholder="Enter your password"
+                  autocomplete="current-password"
+                  enterkeyhint="done"
+                  required
+                >
+                <button
+                  class="password-toggle-btn"
+                  id="btn-toggle-password"
+                  type="button"
+                  title="Toggle password visibility"
+                  aria-label="Toggle password visibility"
+                >
+                  <span id="password-toggle-icon">👁️</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Options Row -->
+            <div class="login-options-row">
+              <label class="remember-checkbox-label">
+                <input type="checkbox" id="remember-me" checked>
+                <span>Remember this device</span>
+              </label>
+              <button class="help-text-btn" id="btn-login-help" type="button">Need help?</button>
+            </div>
+
+            <!-- Submit Button -->
+            <button class="standard-login-btn" id="login-submit-btn" type="submit">
+              <span id="login-btn-text">Sign in as student</span>
+              <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+            </button>
+          </form>
+
+          <!-- Quick Fill Demo Accounts -->
+          <div class="quick-access-section">
+            <div class="quick-access-header">
+              <span class="quick-access-line"></span>
+              <span class="quick-access-title">ONE-CLICK DEMO ACCESS</span>
+              <span class="quick-access-line"></span>
+            </div>
+            <div class="quick-access-buttons">
+              <button class="quick-cred-chip" type="button" data-quick-fill="student" title="Fill student credentials">
+                <span class="quick-icon">🎓</span>
+                <span class="quick-label">Student: <strong>STU-001</strong></span>
+              </button>
+              <button class="quick-cred-chip" type="button" data-quick-fill="teacher" title="Fill teacher credentials">
+                <span class="quick-icon">👨‍🏫</span>
+                <span class="quick-label">Faculty: <strong>TEACHER</strong></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="login-card-footer">
+            <span>🔒 256-bit SSL Protected &bull; AIMT Institute Portal v1.2</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>

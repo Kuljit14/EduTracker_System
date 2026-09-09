@@ -993,7 +993,9 @@ document.querySelectorAll('[data-login-role]').forEach((button) => {
     loginRole = button.dataset.loginRole;
     clearLoginAlert();
     document.querySelectorAll('[data-login-role]').forEach((roleButton) => {
-      roleButton.classList.toggle('active', roleButton === button);
+      const isActive = roleButton === button;
+      roleButton.classList.toggle('active', isActive);
+      roleButton.setAttribute('aria-selected', isActive ? 'true' : 'false');
     });
     if (loginNameLabel) {
       loginNameLabel.textContent = loginRole === 'teacher' ? 'Teacher ID or Name' : 'Student ID or Full Name';
@@ -1006,9 +1008,40 @@ document.querySelectorAll('[data-login-role]').forEach((button) => {
       loginPasswordInput.value = '';
     }
     if (loginBtnText) {
-      loginBtnText.textContent = `Sign in as ${loginRole}`;
+      loginBtnText.textContent = loginRole === 'teacher' ? 'Sign in as Faculty' : 'Sign in as Student';
     }
   });
+});
+
+// Show / Hide password visibility toggle
+document.querySelector('#btn-toggle-password')?.addEventListener('click', () => {
+  if (!loginPasswordInput) return;
+  const isPw = loginPasswordInput.type === 'password';
+  loginPasswordInput.type = isPw ? 'text' : 'password';
+  const icon = document.querySelector('#password-toggle-icon');
+  if (icon) icon.textContent = isPw ? '🙈' : '👁️';
+});
+
+// One-click quick-fill demo credentials
+document.querySelectorAll('[data-quick-fill]').forEach((chip) => {
+  chip.addEventListener('click', () => {
+    const role = chip.dataset.quickFill;
+    const roleBtn = document.querySelector(`[data-login-role="${role}"]`);
+    if (roleBtn) roleBtn.click();
+    if (role === 'teacher') {
+      if (loginNameInput) loginNameInput.value = 'TEACHER';
+      if (loginPasswordInput) loginPasswordInput.value = 'aimt@teacher';
+    } else {
+      if (loginNameInput) loginNameInput.value = 'STU-001';
+      if (loginPasswordInput) loginPasswordInput.value = 'aimt@123';
+    }
+    clearLoginAlert();
+  });
+});
+
+// Login assistance
+document.querySelector('#btn-login-help')?.addEventListener('click', () => {
+  alert('AIMT Institute Portal Assistance:\n\n• Students: Sign in using your registered Student ID (e.g. STU-001) with default password aimt@123.\n• Teachers: Sign in using TEACHER with default password aimt@teacher.\n\nFor account lockouts or new student enrollment, please consult the institute administrative desk.');
 });
 
 document.querySelector('#login-form')?.addEventListener('submit', async (event) => {
