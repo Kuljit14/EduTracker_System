@@ -1,6 +1,6 @@
 # AIMT Tracker — Ambition Institute of Management & Technology
 
-AIMT Tracker is the dedicated Student Progress & Learning Portal for the **Ambition Institute of Management & Technology**. It pairs a modern web frontend with a production-ready **Java Spring Boot** REST backend and an embedded **H2 Database** for data persistence.
+AIMT Tracker is the dedicated Student Progress & Learning Portal for the **Ambition Institute of Management & Technology**. It pairs a modern web frontend with a production-ready **Java Spring Boot** REST backend and a **MySQL Database** for persistent relational storage.
 
 ---
 
@@ -11,52 +11,27 @@ AIMT Tracker is the dedicated Student Progress & Learning Portal for the **Ambit
   - **Teacher Portal**: Student directory, attendance monitor, individual schedule overrides, course topic manager (add, edit, reorder, mark current), batch enrollments, and lesson scheduler.
 - **RESTful Spring Boot Backend**:
   - Full CRUD operations for Courses, Topics, Students, Schedules, and Confirmations.
-  - Spring Data JPA with embedded H2 database (persisted to `./data/edutrack`).
-  - Automated database seeding on initial boot.
-  - Built-in H2 Web Console.
+  - Spring Data JPA with **MySQL Database** (`edutracker_db`).
+  - Automated table creation/update (`spring.jpa.hibernate.ddl-auto=update`).
+  - Automated database creation (`createDatabaseIfNotExist=true`).
   - Global CORS support for seamless multi-origin access.
 - **Single-Artifact Deployment**:
   - The frontend assets (`index.html`, `Style.css`, `Script.js`) are served directly from Spring Boot's `static` resources at `http://localhost:8080/`.
 
 ---
 
-## 📁 Project Structure
+## 🗄️ MySQL Database Setup
 
-```
-edutrack-backend/
-├── pom.xml
-├── README.md
-├── src/
-│   ├── main/
-│   │   ├── java/com/edutrack/
-│   │   │   ├── EduTrackApplication.java           # Spring Boot Application entry point & CORS
-│   │   │   ├── config/
-│   │   │   │   └── DataInitializer.java           # Seeds initial 6 students, 4 courses, and schedule
-│   │   │   ├── controller/
-│   │   │   │   ├── CourseController.java          # Endpoints for courses, topics & enrollments
-│   │   │   │   ├── StudentController.java         # Endpoints for student records & schedule overrides
-│   │   │   │   ├── ScheduleController.java        # Endpoints for class scheduling
-│   │   │   │   └── ConfirmationController.java    # Endpoints for topic confirmations
-│   │   │   ├── dto/                               # Request and response data transfer objects
-│   │   │   ├── model/
-│   │   │   │   ├── Course.java                    # Course JPA entity
-│   │   │   │   ├── Student.java                   # Student JPA entity
-│   │   │   │   ├── Topic.java                     # Embeddable Topic model
-│   │   │   │   ├── ClassSchedule.java             # Class schedule entity
-│   │   │   │   ├── Confirmation.java              # Student check-in feedback entity
-│   │   │   │   ├── ScheduleOverride.java          # Student custom schedule override
-│   │   │   │   └── CompletedTopic.java            # Student completed topic tracking
-│   │   │   ├── repository/                        # Spring Data JPA repositories
-│   │   │   └── service/                           # Business logic service layer
-│   │   └── resources/
-│   │       ├── application.properties             # Spring & H2 database configuration
-│   │       └── static/                            # Frontend Web Application
-│   │           ├── index.html
-│   │           ├── Style.css
-│   │           └── Script.js
-│   └── test/
-│       └── java/com/edutrack/
-│           └── EduTrackApplicationTests.java      # Comprehensive automated tests
+The application is configured to connect to MySQL on standard port `3306`:
+- **Database Name**: `edutracker_db` (automatically created on first run via `createDatabaseIfNotExist=true`)
+- **Default Username**: `root`
+- **Default Password**: `root`
+
+You can customize credentials in `src/main/resources/application.properties` or set environment variables:
+```properties
+spring.datasource.url=jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:edutracker_db}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+spring.datasource.username=${MYSQL_USER:root}
+spring.datasource.password=${MYSQL_PASSWORD:root}
 ```
 
 ---
@@ -64,6 +39,7 @@ edutrack-backend/
 ## 🛠️ Prerequisites
 
 - **Java 17** or higher JDK installed.
+- **MySQL 8.x** running locally on port 3306 (or through XAMPP, WAMP, Docker).
 - **Maven** (or use the included wrapper).
 
 ---
@@ -93,10 +69,7 @@ java -jar target/edutrack-backend-1.0.0.jar
 ## 🌐 Accessing the Application
 
 - **Web Portal**: [http://localhost:8080](http://localhost:8080)
-- **H2 Database Console**: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
-  - **JDBC URL**: `jdbc:h2:file:./data/edutrack`
-  - **User**: `sa`
-  - **Password**: *(leave blank)*
+- **MySQL Database**: `edutracker_db` (viewable via MySQL Workbench, DBeaver, or phpMyAdmin)
 
 ---
 
