@@ -1,10 +1,28 @@
 package com.edutrack.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class ScheduleRequest {
+    @Size(max = 50, message = "ID must not exceed 50 characters")
     private String id;
+
+    @NotNull(message = "Course index is required")
+    @Min(value = 0, message = "Course index cannot be negative")
     private Integer courseIndex;
+
+    @NotBlank(message = "Topic cannot be blank")
+    @Size(max = 150, message = "Topic must not exceed 150 characters")
     private String topic;
+
+    @NotBlank(message = "Date cannot be blank")
+    @Size(max = 50, message = "Date must not exceed 50 characters")
     private String date;
+
+    @NotBlank(message = "Time cannot be blank")
+    @Size(max = 50, message = "Time must not exceed 50 characters")
     private String time;
 
     public ScheduleRequest() {

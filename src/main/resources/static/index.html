@@ -76,6 +76,22 @@
           href="#">Contact support →</a></div>
     </aside>
     <main>
+      <!-- Mobile Top Bar for Phone / Tablet -->
+      <header class="mobile-header">
+        <div class="mobile-header-brand">
+          <img src="logo.jpg" alt="AIMT Logo" class="mobile-brand-logo">
+          <div class="mobile-brand-info">
+            <span class="mobile-brand-title">AIMT Tracker</span>
+            <span class="mobile-role-pill" id="mobile-role-pill">STUDENT</span>
+          </div>
+        </div>
+        <div class="mobile-header-actions">
+          <button class="mobile-action-btn" id="mobile-btn-password" title="Change Password" aria-label="Change Password">🔑</button>
+          <button class="mobile-action-btn mobile-logout-btn" id="mobile-btn-logout" title="Log out" aria-label="Log out">🚪</button>
+          <div class="mini-avatar mobile-user-avatar" id="mobile-avatar">ST</div>
+        </div>
+      </header>
+
       <header class="top">
         <div>
           <div class="crumb" id="crumb">Student portal / Overview</div>
@@ -564,6 +580,53 @@
         </div>
       </section>
     </main>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+      <!-- Student Mobile Tabs -->
+      <button class="mobile-nav-item student-only active" data-page="dashboard" type="button">
+        <span class="mobile-nav-icon">▦</span>
+        <span class="mobile-nav-label">Home</span>
+      </button>
+      <button class="mobile-nav-item student-only" data-page="courses" type="button">
+        <span class="mobile-nav-icon">▤</span>
+        <span class="mobile-nav-label">Courses</span>
+      </button>
+      <button class="mobile-nav-item student-only" data-page="calendar" type="button">
+        <span class="mobile-nav-icon">◷</span>
+        <span class="mobile-nav-label">Attendance</span>
+      </button>
+      <button class="mobile-nav-item student-only" data-page="results" type="button">
+        <span class="mobile-nav-icon">◈</span>
+        <span class="mobile-nav-label">Results</span>
+      </button>
+      <button class="mobile-nav-item student-only" id="mobile-nav-security" type="button" title="Change Password">
+        <span class="mobile-nav-icon">🔑</span>
+        <span class="mobile-nav-label">Security</span>
+      </button>
+
+      <!-- Teacher Mobile Tabs -->
+      <button class="mobile-nav-item teacher-only active" data-page="students" type="button" style="display:none">
+        <span class="mobile-nav-icon">♙</span>
+        <span class="mobile-nav-label">Students</span>
+      </button>
+      <button class="mobile-nav-item teacher-only" data-page="teacher-courses" type="button" style="display:none">
+        <span class="mobile-nav-icon">▤</span>
+        <span class="mobile-nav-label">Courses</span>
+      </button>
+      <button class="mobile-nav-item teacher-only" data-page="topic-manager" type="button" style="display:none">
+        <span class="mobile-nav-icon">☷</span>
+        <span class="mobile-nav-label">Topics</span>
+      </button>
+      <button class="mobile-nav-item teacher-only" data-page="reports" type="button" style="display:none">
+        <span class="mobile-nav-icon">◫</span>
+        <span class="mobile-nav-label">Reports</span>
+      </button>
+      <button class="mobile-nav-item teacher-only" data-page="schedule-manager" type="button" style="display:none">
+        <span class="mobile-nav-icon">◷</span>
+        <span class="mobile-nav-label">Schedule</span>
+      </button>
+    </nav>
   </div>
 
   <div class="modal-backdrop" id="course-students-modal" style="display:none;">

@@ -1,9 +1,18 @@
 package com.edutrack.dto;
 
+import jakarta.validation.constraints.Size;
+
 public class CourseSettingsDto {
+    @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String description;
+
+    @Size(max = 1000, message = "Announcement must not exceed 1000 characters")
     private String announcement;
+
+    @Size(max = 50, message = "Day must not exceed 50 characters")
     private String day;
+
+    @Size(max = 50, message = "Time must not exceed 50 characters")
     private String time;
 
     public CourseSettingsDto() {

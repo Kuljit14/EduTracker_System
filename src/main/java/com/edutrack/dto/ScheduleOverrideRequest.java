@@ -1,8 +1,21 @@
 package com.edutrack.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class ScheduleOverrideRequest {
+    @NotNull(message = "Course index is required")
+    @Min(value = 0, message = "Course index cannot be negative")
     private Integer courseIndex;
+
+    @NotBlank(message = "Day cannot be blank")
+    @Size(max = 50, message = "Day must not exceed 50 characters")
     private String day;
+
+    @NotBlank(message = "Time cannot be blank")
+    @Size(max = 50, message = "Time must not exceed 50 characters")
     private String time;
 
     public ScheduleOverrideRequest() {

@@ -4,6 +4,7 @@ import com.edutrack.dto.ScheduleOverrideRequest;
 import com.edutrack.dto.StudentUpdateRequest;
 import com.edutrack.model.Student;
 import com.edutrack.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
-@CrossOrigin(origins = "*")
 public class StudentController {
 
     private final StudentService studentService;
@@ -42,7 +42,7 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(
             @PathVariable String id,
-            @RequestBody StudentUpdateRequest req) {
+            @RequestBody @Valid StudentUpdateRequest req) {
         return ResponseEntity.ok(studentService.updateStudent(id, req));
     }
 
@@ -55,7 +55,7 @@ public class StudentController {
     @PostMapping("/{id}/override")
     public ResponseEntity<Student> saveScheduleOverride(
             @PathVariable String id,
-            @RequestBody ScheduleOverrideRequest req) {
+            @RequestBody @Valid ScheduleOverrideRequest req) {
         return ResponseEntity.ok(studentService.saveScheduleOverride(id, req));
     }
 

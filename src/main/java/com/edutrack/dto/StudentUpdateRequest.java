@@ -1,10 +1,20 @@
 package com.edutrack.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public class StudentUpdateRequest {
+    @NotBlank(message = "Student name cannot be blank")
+    @Size(max = 100, message = "Student name must not exceed 100 characters")
     private String name;
+
+    @Min(value = 0, message = "Attendance cannot be less than 0")
+    @Max(value = 100, message = "Attendance cannot exceed 100")
     private Integer attendance;
+
     private List<Integer> enrollments;
 
     public StudentUpdateRequest() {

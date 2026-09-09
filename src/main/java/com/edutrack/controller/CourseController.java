@@ -6,6 +6,7 @@ import com.edutrack.dto.ReorderTopicRequest;
 import com.edutrack.dto.TopicRequest;
 import com.edutrack.model.Course;
 import com.edutrack.service.CourseService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/courses")
-@CrossOrigin(origins = "*")
 public class CourseController {
 
     private final CourseService courseService;
@@ -46,12 +46,12 @@ public class CourseController {
     }
 
     @PutMapping("/{id}/settings")
-    public ResponseEntity<Course> updateCourseSettings(@PathVariable Integer id, @RequestBody CourseSettingsDto settings) {
+    public ResponseEntity<Course> updateCourseSettings(@PathVariable Integer id, @RequestBody @Valid CourseSettingsDto settings) {
         return ResponseEntity.ok(courseService.updateCourseSettings(id, settings));
     }
 
     @PostMapping("/{id}/topics")
-    public ResponseEntity<Course> addTopic(@PathVariable Integer id, @RequestBody TopicRequest req) {
+    public ResponseEntity<Course> addTopic(@PathVariable Integer id, @RequestBody @Valid TopicRequest req) {
         return ResponseEntity.ok(courseService.addTopic(id, req));
     }
 
@@ -59,7 +59,7 @@ public class CourseController {
     public ResponseEntity<Course> updateTopic(
             @PathVariable Integer id,
             @PathVariable int topicIndex,
-            @RequestBody TopicRequest req) {
+            @RequestBody @Valid TopicRequest req) {
         return ResponseEntity.ok(courseService.updateTopic(id, topicIndex, req.getName(), req.getDescription()));
     }
 
@@ -69,7 +69,7 @@ public class CourseController {
     }
 
     @PutMapping("/{id}/topics/reorder")
-    public ResponseEntity<Course> reorderTopic(@PathVariable Integer id, @RequestBody ReorderTopicRequest req) {
+    public ResponseEntity<Course> reorderTopic(@PathVariable Integer id, @RequestBody @Valid ReorderTopicRequest req) {
         return ResponseEntity.ok(courseService.reorderTopic(id, req.getFromIndex(), req.getDirection()));
     }
 

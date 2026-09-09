@@ -101,14 +101,44 @@ const saveNotices = () => {
 };
 
 const escapeHtml = (str) => {
-  if (typeof str !== 'string') return '';
-  return str.replace(/[&<>"']/g, (m) => ({
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/[&<>"']/g, (m) => ({
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
     "'": '&#39;',
   }[m]));
+};
+
+// Cryptographic hash helper for safe password storage
+const sha256Hex = async (str) => {
+  if (!str) return '';
+  try {
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+      const msgBuffer = new TextEncoder().encode(String(str));
+      const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (e) {
+    console.warn('SubtleCrypto error, falling back:', e);
+  }
+  let hash = 0;
+  const s = String(str);
+  for (let i = 0; i < s.length; i++) {
+    const char = s.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return 'shash_' + Math.abs(hash);
+};
+
+const verifyPassword = async (inputPw, storedPw) => {
+  if (!inputPw || !storedPw) return false;
+  if (inputPw === storedPw) return true;
+  const hashedInput = await sha256Hex(inputPw);
+  return hashedInput === storedPw;
 };
 
 const saveStudents = () => {
@@ -246,12 +276,12 @@ const renderCourses = () => {
         <button class="course course-button" type="button" data-course="${index}">
           <div class="course-row">
             <div>
-              <div class="course-name">${course.name}</div>
-              <div class="course-meta">${course.description || ''} · ${sched.day}, ${sched.time}</div>
+              <div class="course-name">${escapeHtml(course.name)}</div>
+              <div class="course-meta">${escapeHtml(course.description || '')} · ${escapeHtml(sched.day)}, ${escapeHtml(sched.time)}</div>
             </div>
-            <div><span class="score">${prog}%</span><span class="course-arrow">→</span></div>
+            <div><span class="score">${escapeHtml(prog)}%</span><span class="course-arrow">→</span></div>
           </div>
-          <div class="progress"><i style="width:${prog}%"></i></div>
+          <div class="progress"><i style="width:${escapeHtml(prog)}%"></i></div>
         </button>`;
         })
         .join('')
@@ -270,7 +300,7 @@ const renderDashboardCourses = () => {
       if (!isEnrolled(activeStudent, index)) return '';
       const prog = getStudentProgress(activeStudent, index);
       const sched = getStudentSchedule(activeStudent, index);
-      return `<div class="course"><div class="course-row"><div><div class="course-name">${course.name}</div><div class="course-meta">${sched.day} · ${sched.time}</div></div><div class="score">${prog}%</div></div><div class="progress"><i style="width:${prog}%"></i></div></div>`;
+      return `<div class="course"><div class="course-row"><div><div class="course-name">${escapeHtml(course.name)}</div><div class="course-meta">${escapeHtml(sched.day)} · ${escapeHtml(sched.time)}</div></div><div class="score">${escapeHtml(prog)}%</div></div><div class="progress"><i style="width:${escapeHtml(prog)}%"></i></div></div>`;
     })
     .filter(Boolean);
 
@@ -291,7 +321,8 @@ const renderStudentSchedule = () => {
       if (!isEnrolled(activeStudent, index)) return '';
       const nextLesson = schedules.find((s) => s.courseIndex === index);
       const sched = getStudentSchedule(activeStudent, index);
-      return `<div class="schedule-row"><div><strong>${course.name}</strong><small>${nextLesson ? `Next topic: ${nextLesson.topic}` : (course.announcement || 'No announcement')}</small></div><span class="schedule-time">${sched.day} · ${sched.time}</span></div>`;
+      const nextTopicText = nextLesson ? `Next topic: ${escapeHtml(nextLesson.topic)}` : escapeHtml(course.announcement || 'No announcement');
+      return `<div class="schedule-row"><div><strong>${escapeHtml(course.name)}</strong><small>${nextTopicText}</small></div><span class="schedule-time">${escapeHtml(sched.day)} · ${escapeHtml(sched.time)}</span></div>`;
     })
     .filter(Boolean);
 
@@ -360,10 +391,10 @@ const renderCourseDetails = (courseIndex) => {
           const studentState = individuallyCompleted ? 'completed' : topic.status;
           const icon = studentState === 'completed' ? '✓' : studentState === 'current' ? '●' : index + 1;
           const label = individuallyCompleted ? 'Completed by you' : studentState === 'completed' ? 'Completed in course' : studentState === 'current' ? 'Current topic' : 'Upcoming';
-          return `<div class="topic-item ${studentState}">
-            <div class="topic-icon">${icon}</div>
-            <div class="topic-copy"><strong>${topic.name}</strong><p>${topic.description || ''}</p></div>
-            <span class="topic-status">${label}</span>
+          return `<div class="topic-item ${escapeHtml(studentState)}">
+            <div class="topic-icon">${escapeHtml(icon)}</div>
+            <div class="topic-copy"><strong>${escapeHtml(topic.name)}</strong><p>${escapeHtml(topic.description || '')}</p></div>
+            <span class="topic-status">${escapeHtml(label)}</span>
           </div>`;
         })
         .join('')
@@ -371,13 +402,13 @@ const renderCourseDetails = (courseIndex) => {
 
   const availableTopics = schedules
     .filter((schedule) => schedule.courseIndex === courseIndex && schedule.date === isoToday)
-    .map((schedule) => `<option value="${schedule.topic}" ${todayClass?.topic === schedule.topic ? 'selected' : ''}>${schedule.topic}</option>`)
+    .map((schedule) => `<option value="${escapeHtml(schedule.topic)}" ${todayClass?.topic === schedule.topic ? 'selected' : ''}>${escapeHtml(schedule.topic)}</option>`)
     .join('');
 
   const checkinContent = submittedConfirmation
-    ? `<div class="checkin-success"><strong>✓ Today’s topic is confirmed.</strong><br>You completed <b>${submittedConfirmation.topic}</b> and shared your class feedback with your teacher.</div>`
+    ? `<div class="checkin-success"><strong>✓ Today’s topic is confirmed.</strong><br>You completed <b>${escapeHtml(submittedConfirmation.topic)}</b> and shared your class feedback with your teacher.</div>`
     : todayClass
-      ? `<p class="checkin-date">TODAY’S CLASS · ${todayClass.time}</p>
+      ? `<p class="checkin-date">TODAY’S CLASS · ${escapeHtml(todayClass.time)}</p>
          <form id="topic-confirmation-form" class="confirmation-form">
            <label class="field-label" for="completed-topic">Topic completed today</label>
            <select class="select manager-select" id="completed-topic">${availableTopics}</select>
@@ -391,8 +422,8 @@ const renderCourseDetails = (courseIndex) => {
     <div class="course-detail-grid">
       <article class="card">
         <div class="course-overview">
-          <div><h2>${course.name}</h2><p>${course.description || ''}</p><p>${course.announcement || ''}</p></div>
-          <div class="progress-ring">${getStudentProgress(activeStudent, courseIndex)}%</div>
+          <div><h2>${escapeHtml(course.name)}</h2><p>${escapeHtml(course.description || '')}</p><p>${escapeHtml(course.announcement || '')}</p></div>
+          <div class="progress-ring">${escapeHtml(getStudentProgress(activeStudent, courseIndex))}%</div>
         </div>
         <h3 class="card-title">Course topics</h3>
         <p class="card-sub">Follow your learning path: completed topics, current lesson, and upcoming topics.</p>
@@ -478,27 +509,27 @@ const renderStudents = () => {
           const progs = student.progress ? Object.values(student.progress) : [];
           const avgP = progs.length ? Math.round(progs.reduce((a, b) => a + b, 0) / progs.length) : 0;
           const courseNames = Array.isArray(student.enrollments)
-            ? student.enrollments.map((idx) => courses[idx]?.shortName || '').filter(Boolean).join(', ')
+            ? student.enrollments.map((idx) => courses[idx]?.shortName || '').filter(Boolean).map(escapeHtml).join(', ')
             : '';
           return `
-        <tr class="student-row" data-student-id="${student.id}">
+        <tr class="student-row" data-student-id="${escapeHtml(student.id)}">
           <td>
             <div class="student">
-              <div class="mini-avatar a${(index % 3) + 1}">${student.initials || 'ST'}</div>
-              ${student.name}
+              <div class="mini-avatar a${(index % 3) + 1}">${escapeHtml(student.initials || 'ST')}</div>
+              ${escapeHtml(student.name)}
             </div>
           </td>
           <td>${courseNames || 'No course'}</td>
           <td>
             <span class="tprogress">
-              <span class="progress"><i style="width:${avgP}%"></i></span>
+              <span class="progress"><i style="width:${escapeHtml(avgP)}%"></i></span>
             </span>
-            ${avgP}%
+            ${escapeHtml(avgP)}%
           </td>
-          <td>${student.attendance ?? 100}%</td>
+          <td>${escapeHtml(student.attendance ?? 100)}%</td>
           <td><span class="badge ${(student.attendance ?? 100) < 85 ? 'warn' : ''}">${(student.attendance ?? 100) < 85 ? 'Needs attention' : 'On track'}</span></td>
           <td style="text-align:center;">
-            <button class="table-action-btn" data-edit-student="${student.id}" type="button">✏️ Edit</button>
+            <button class="table-action-btn" data-edit-student="${escapeHtml(student.id)}" type="button">✏️ Edit</button>
           </td>
         </tr>`;
         })
@@ -523,8 +554,8 @@ const renderTeacherTopics = () => {
     .map(
       (topic, index) => `
         <div class="teacher-topic-item">
-          <div><strong>${topic.name}</strong><small>${topic.description || ''}</small></div>
-          <span class="topic-status">${topic.status}</span>
+          <div><strong>${escapeHtml(topic.name)}</strong><small>${escapeHtml(topic.description || '')}</small></div>
+          <span class="topic-status">${escapeHtml(topic.status)}</span>
           ${topic.status === 'completed' ? '' : `<button class="remove-topic" type="button" data-set-current="${index}">Set current</button>`}
           <button class="remove-topic" type="button" data-edit-topic="${index}">Edit</button>
           <button class="remove-topic" type="button" data-move-topic="${index}" data-direction="-1">↑</button>
@@ -542,7 +573,7 @@ const renderTeacherConfirmations = () => {
   container.innerHTML = recentConfirmations.length
     ? recentConfirmations
         .map(
-          (c) => `<div class="confirmation-item"><strong>${c.student} · ${(courses[c.courseIndex] || {}).shortName || ''}</strong><small>${c.date} at ${c.submittedAt} · ${c.topic}</small><p>“${c.comment}”</p></div>`,
+          (c) => `<div class="confirmation-item"><strong>${escapeHtml(c.student)} · ${escapeHtml((courses[c.courseIndex] || {}).shortName || '')}</strong><small>${escapeHtml(c.date)} at ${escapeHtml(c.submittedAt)} · ${escapeHtml(c.topic)}</small><p>“${escapeHtml(c.comment)}”</p></div>`,
         )
         .join('')
     : '<p class="empty-state">No student topic confirmations have been submitted yet.</p>';
@@ -556,7 +587,7 @@ const renderTeacherSchedule = () => {
         .slice()
         .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
         .map(
-          (s) => `<div class="teacher-topic-item"><div><strong>${(courses[s.courseIndex] || {}).name || ''}</strong><small>${s.topic} · ${s.date}, ${s.time}</small></div><button class="remove-topic" type="button" data-remove-schedule="${s.id}">Remove</button></div>`,
+          (s) => `<div class="teacher-topic-item"><div><strong>${escapeHtml((courses[s.courseIndex] || {}).name || '')}</strong><small>${escapeHtml(s.topic)} · ${escapeHtml(s.date)}, ${escapeHtml(s.time)}</small></div><button class="remove-topic" type="button" data-remove-schedule="${escapeHtml(s.id)}">Remove</button></div>`,
         )
         .join('')
     : '<p class="empty-state">No classes are scheduled yet.</p>';
@@ -650,21 +681,21 @@ const renderBatchStudents = () => {
       enrolledList.innerHTML = visibleEnrolled.map((s) => {
         const prog = s.progress && s.progress[courseIndex] !== undefined ? s.progress[courseIndex] : 0;
         return `
-          <div class="batch-student-item" data-student-id="${s.id}">
+          <div class="batch-student-item" data-student-id="${escapeHtml(s.id)}">
             <div class="batch-student-left">
-              <input type="checkbox" data-enrolled-student="${s.id}" title="Select student">
-              <div class="batch-student-avatar">${s.initials || 'ST'}</div>
+              <input type="checkbox" data-enrolled-student="${escapeHtml(s.id)}" title="Select student">
+              <div class="batch-student-avatar">${escapeHtml(s.initials || 'ST')}</div>
               <div class="batch-student-meta">
                 <span class="batch-student-name">${escapeHtml(s.name)}</span>
                 <span class="batch-student-sub">
-                  <span>${s.id}</span> • 
-                  <span>${prog}% complete</span> • 
-                  <span>${s.attendance ?? 100}% att.</span>
+                  <span>${escapeHtml(s.id)}</span> • 
+                  <span>${escapeHtml(prog)}% complete</span> • 
+                  <span>${escapeHtml(s.attendance ?? 100)}% att.</span>
                 </span>
               </div>
             </div>
             <div class="batch-student-right">
-              <button type="button" class="batch-quick-btn batch-quick-remove" data-quick-unenroll="${s.id}" title="Remove from course">✕ Remove</button>
+              <button type="button" class="batch-quick-btn batch-quick-remove" data-quick-unenroll="${escapeHtml(s.id)}" title="Remove from course">✕ Remove</button>
             </div>
           </div>`;
       }).join('');
@@ -681,21 +712,21 @@ const renderBatchStudents = () => {
       availableList.innerHTML = visibleAvailable.map((s) => {
         const otherCoursesCount = (s.enrollments || []).length;
         return `
-          <div class="batch-student-item" data-student-id="${s.id}">
+          <div class="batch-student-item" data-student-id="${escapeHtml(s.id)}">
             <div class="batch-student-left">
-              <input type="checkbox" data-available-student="${s.id}" title="Select student">
-              <div class="batch-student-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">${s.initials || 'ST'}</div>
+              <input type="checkbox" data-available-student="${escapeHtml(s.id)}" title="Select student">
+              <div class="batch-student-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">${escapeHtml(s.initials || 'ST')}</div>
               <div class="batch-student-meta">
                 <span class="batch-student-name">${escapeHtml(s.name)}</span>
                 <span class="batch-student-sub">
-                  <span>${s.id}</span> • 
-                  <span>${otherCoursesCount} other course${otherCoursesCount === 1 ? '' : 's'}</span> • 
-                  <span>${s.attendance ?? 100}% att.</span>
+                  <span>${escapeHtml(s.id)}</span> • 
+                  <span>${escapeHtml(otherCoursesCount)} other course${otherCoursesCount === 1 ? '' : 's'}</span> • 
+                  <span>${escapeHtml(s.attendance ?? 100)}% att.</span>
                 </span>
               </div>
             </div>
             <div class="batch-student-right">
-              <button type="button" class="batch-quick-btn batch-quick-add" data-quick-enroll="${s.id}" title="Enroll in course">+ Enroll</button>
+              <button type="button" class="batch-quick-btn batch-quick-add" data-quick-enroll="${escapeHtml(s.id)}" title="Enroll in course">+ Enroll</button>
             </div>
           </div>`;
       }).join('');
@@ -717,8 +748,8 @@ const renderReports = () => {
         ? Math.round(enrolledStudents.reduce((sum, s) => sum + getStudentProgress(s, index), 0) / enrolledStudents.length)
         : 0;
       return `<div class="course">
-        <div class="course-row"><b>${course.name}</b><b>${avgScore}%</b></div>
-        <div class="progress"><i style="width:${avgScore}%"></i></div>
+        <div class="course-row"><b>${escapeHtml(course.name)}</b><b>${escapeHtml(avgScore)}%</b></div>
+        <div class="progress"><i style="width:${escapeHtml(avgScore)}%"></i></div>
       </div>`;
     })
     .join('');
@@ -736,30 +767,30 @@ const updateCourseDropdowns = () => {
   const teacherCourseSelect = document.querySelector('#teacher-course');
   if (teacherCourseSelect) {
     teacherCourseSelect.innerHTML = courses.length
-      ? courses.map((course, index) => `<option value="${index}">${course.name}</option>`).join('')
+      ? courses.map((course, index) => `<option value="${index}">${escapeHtml(course.name)}</option>`).join('')
       : '<option value="">No courses available</option>';
   }
   const scheduleCourseSelect = document.querySelector('#schedule-course');
   if (scheduleCourseSelect) {
     scheduleCourseSelect.innerHTML = courses.length
-      ? courses.map((course, index) => `<option value="${index}">${course.name}</option>`).join('')
+      ? courses.map((course, index) => `<option value="${index}">${escapeHtml(course.name)}</option>`).join('')
       : '<option value="">No courses available</option>';
     renderScheduleTopicOptions();
   }
   const courseFilter = document.querySelector('#course-filter');
   if (courseFilter) {
-    courseFilter.innerHTML = '<option>All courses</option>' + courses.map((c) => `<option>${c.shortName}</option>`).join('');
+    courseFilter.innerHTML = '<option>All courses</option>' + courses.map((c) => `<option>${escapeHtml(c.shortName)}</option>`).join('');
   }
   const newStudentEnrollments = document.querySelector('#new-student-enrollments');
   if (newStudentEnrollments) {
     newStudentEnrollments.innerHTML = courses.length
-      ? courses.map((c, i) => `<label class="enrollment-row"><input type="checkbox" value="${i}"><span>${c.name}</span></label>`).join('')
+      ? courses.map((c, i) => `<label class="enrollment-row"><input type="checkbox" value="${i}"><span>${escapeHtml(c.name)}</span></label>`).join('')
       : '<p class="empty-state">No courses to enroll yet.</p>';
   }
   const newCourseEnrollments = document.querySelector('#new-course-enrollments');
   if (newCourseEnrollments) {
     newCourseEnrollments.innerHTML = studentRecords.length
-      ? studentRecords.map((s) => `<label class="enrollment-row"><input type="checkbox" value="${s.id}"><span>${s.name} · ${s.id}</span></label>`).join('')
+      ? studentRecords.map((s) => `<label class="enrollment-row"><input type="checkbox" value="${escapeHtml(s.id)}"><span>${escapeHtml(s.name)} · ${escapeHtml(s.id)}</span></label>`).join('')
       : '<p class="empty-state">No registered students yet. You can enroll students anytime later.</p>';
   }
 };
@@ -772,11 +803,11 @@ const openStudentDetail = (studentId) => {
   document.querySelector('#detail-student-name').value = student.name;
   document.querySelector('#detail-attendance').value = student.attendance ?? 100;
   document.querySelector('#detail-enrollments').innerHTML = courses.length
-    ? courses.map((course, index) => `<label class="enrollment-row"><input type="checkbox" value="${index}" ${isEnrolled(student, index) ? 'checked' : ''}><span>${course.name}</span></label>`).join('')
+    ? courses.map((course, index) => `<label class="enrollment-row"><input type="checkbox" value="${index}" ${isEnrolled(student, index) ? 'checked' : ''}><span>${escapeHtml(course.name)}</span></label>`).join('')
     : '<p class="empty-state">No courses available.</p>';
   const overrideCourse = document.querySelector('#override-course');
   overrideCourse.innerHTML = Array.isArray(student.enrollments) && student.enrollments.length
-    ? student.enrollments.map((courseIndex) => `<option value="${courseIndex}">${(courses[courseIndex] || {}).name || ''}</option>`).join('')
+    ? student.enrollments.map((courseIndex) => `<option value="${courseIndex}">${escapeHtml((courses[courseIndex] || {}).name || '')}</option>`).join('')
     : '<option value="">No enrolled courses</option>';
   const selectedCourse = Number(overrideCourse.value);
   if (!isNaN(selectedCourse) && courses[selectedCourse]) {
@@ -816,7 +847,7 @@ function showPage(page) {
   const target = document.querySelector(`#${page}`);
   if (target) target.classList.add('active');
 
-  document.querySelectorAll('.nav button').forEach((button) => {
+  document.querySelectorAll('[data-page]').forEach((button) => {
     button.classList.toggle('active', button.dataset.page === page);
   });
 
@@ -898,7 +929,12 @@ const setRole = (role, name = '') => {
     ? `Welcome back, ${displayName}!`
     : `Good morning, ${displayName}!`;
   const avatarInitials = teacher ? 'TR' : (activeStudent ? activeStudent.initials : 'ST');
-  document.querySelector('#avatar').textContent = avatarInitials;
+  const desktopAvatar = document.querySelector('#avatar');
+  if (desktopAvatar) desktopAvatar.textContent = avatarInitials;
+  const mobileAvatar = document.querySelector('#mobile-avatar');
+  if (mobileAvatar) mobileAvatar.textContent = avatarInitials;
+  const mobileRolePill = document.querySelector('#mobile-role-pill');
+  if (mobileRolePill) mobileRolePill.textContent = teacher ? 'TEACHER' : 'STUDENT';
   showPage(teacher ? 'students' : 'dashboard');
 };
 
@@ -975,7 +1011,7 @@ document.querySelectorAll('[data-login-role]').forEach((button) => {
   });
 });
 
-document.querySelector('#login-form')?.addEventListener('submit', (event) => {
+document.querySelector('#login-form')?.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearLoginAlert();
 
@@ -1004,7 +1040,7 @@ document.querySelector('#login-form')?.addEventListener('submit', (event) => {
         id: newId,
         name: identifier,
         initials,
-        password: password || 'aimt@123',
+        password: await sha256Hex(password || 'aimt@123'),
         enrollments: [],
         progress: {},
         attendance: 100,
@@ -1022,9 +1058,16 @@ document.querySelector('#login-form')?.addEventListener('submit', (event) => {
     }
 
     const expectedPw = found.password || 'aimt@123';
-    if (password !== expectedPw) {
+    const isPwValid = await verifyPassword(password, expectedPw);
+    if (!isPwValid) {
       showLoginAlert('Incorrect student password! Default is aimt@123 unless changed.');
       return;
+    }
+
+    // Silently upgrade legacy plain-text passwords to SHA-256
+    if (found.password === password) {
+      found.password = await sha256Hex(password);
+      saveStudents();
     }
 
     // Login successful
@@ -1049,9 +1092,16 @@ document.querySelector('#login-form')?.addEventListener('submit', (event) => {
     }
 
     const expectedPw = teacherAuth.password || 'aimt@teacher';
-    if (password !== expectedPw) {
+    const isPwValid = await verifyPassword(password, expectedPw);
+    if (!isPwValid) {
       showLoginAlert('Incorrect teacher password! Default is aimt@teacher unless changed.');
       return;
+    }
+
+    // Silently upgrade legacy plain-text passwords to SHA-256
+    if (teacherAuth.password === password) {
+      teacherAuth.password = await sha256Hex(password);
+      saveTeacherAuth(teacherAuth);
     }
 
     // Teacher login successful
@@ -1062,6 +1112,12 @@ document.querySelector('#login-form')?.addEventListener('submit', (event) => {
 });
 
 document.querySelector('#logout-button')?.addEventListener('click', () => {
+  document.body.classList.remove('authenticated');
+  if (loginPasswordInput) loginPasswordInput.value = '';
+  clearLoginAlert();
+});
+
+document.querySelector('#mobile-btn-logout')?.addEventListener('click', () => {
   document.body.classList.remove('authenticated');
   if (loginPasswordInput) loginPasswordInput.value = '';
   clearLoginAlert();
@@ -1104,6 +1160,8 @@ const closeChangePasswordModal = () => {
 };
 
 document.querySelector('#btn-open-change-password')?.addEventListener('click', openChangePasswordModal);
+document.querySelector('#mobile-btn-password')?.addEventListener('click', openChangePasswordModal);
+document.querySelector('#mobile-nav-security')?.addEventListener('click', openChangePasswordModal);
 document.querySelector('#btn-close-change-pw-modal')?.addEventListener('click', closeChangePasswordModal);
 document.querySelector('#btn-cancel-change-pw')?.addEventListener('click', closeChangePasswordModal);
 changePwModal?.addEventListener('click', (event) => {
@@ -1112,7 +1170,7 @@ changePwModal?.addEventListener('click', (event) => {
   }
 });
 
-document.querySelector('#change-password-form')?.addEventListener('submit', (event) => {
+document.querySelector('#change-password-form')?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const currentVal = currentPwInput ? currentPwInput.value.trim() : '';
   const newVal = newPwInput ? newPwInput.value.trim() : '';
@@ -1139,11 +1197,12 @@ document.querySelector('#change-password-form')?.addEventListener('submit', (eve
   if (currentRole === 'teacher') {
     const teacherAuth = getTeacherAuth();
     const currentExpected = teacherAuth.password || 'aimt@teacher';
-    if (currentVal !== currentExpected) {
+    const isCurrentValid = await verifyPassword(currentVal, currentExpected);
+    if (!isCurrentValid) {
       showModalAlert('Current teacher password is incorrect.', 'error');
       return;
     }
-    teacherAuth.password = newVal;
+    teacherAuth.password = await sha256Hex(newVal);
     saveTeacherAuth(teacherAuth);
     showModalAlert('Teacher password updated successfully!', 'success');
     setTimeout(() => {
@@ -1155,14 +1214,16 @@ document.querySelector('#change-password-form')?.addEventListener('submit', (eve
       return;
     }
     const currentExpected = activeStudent.password || 'aimt@123';
-    if (currentVal !== currentExpected) {
+    const isCurrentValid = await verifyPassword(currentVal, currentExpected);
+    if (!isCurrentValid) {
       showModalAlert('Current student password is incorrect.', 'error');
       return;
     }
-    activeStudent.password = newVal;
+    const hashedNew = await sha256Hex(newVal);
+    activeStudent.password = hashedNew;
     const idx = studentRecords.findIndex((s) => s.id === activeStudent.id);
     if (idx !== -1) {
-      studentRecords[idx].password = newVal;
+      studentRecords[idx].password = hashedNew;
     }
     saveStudents();
     showModalAlert('Password updated successfully!', 'success');
@@ -1450,7 +1511,7 @@ document.querySelector('#create-student-form')?.addEventListener('submit', async
     id: newId,
     name,
     initials,
-    password: 'aimt@123',
+    password: await sha256Hex('aimt@123'),
     attendance,
     enrollments,
     progress: {},
@@ -1578,15 +1639,15 @@ const renderTeacherCourses = () => {
           <div>
             <div class="course-manage-top">
               <div style="display:flex;align-items:center;gap:8px;">
-                <span class="badge course-badge">${course.shortName || 'CRS'}</span>
-                <span class="course-schedule-tag">◷ ${day}, ${time}</span>
+                <span class="badge course-badge">${escapeHtml(course.shortName || 'CRS')}</span>
+                <span class="course-schedule-tag">◷ ${escapeHtml(day)}, ${escapeHtml(time)}</span>
               </div>
-              <button class="course-delete-btn" type="button" data-delete-course="${index}" title="Delete ${course.name}">
+              <button class="course-delete-btn" type="button" data-delete-course="${index}" title="Delete ${escapeHtml(course.name)}">
                 Delete
               </button>
             </div>
-            <h3 class="course-manage-name">${course.name}</h3>
-            <p class="course-manage-desc">${course.description || 'No description provided.'}</p>
+            <h3 class="course-manage-name">${escapeHtml(course.name)}</h3>
+            <p class="course-manage-desc">${escapeHtml(course.description || 'No description provided.')}</p>
           </div>
           <div>
             <div class="course-manage-meta">
@@ -1635,13 +1696,13 @@ const openCourseStudentsModal = (courseIndex) => {
       ? enrolledStudents.map((s) => `
           <div class="modal-student-row">
             <div class="modal-student-info">
-              <div class="modal-student-avatar">${s.initials || s.name.slice(0, 2).toUpperCase()}</div>
+              <div class="modal-student-avatar">${escapeHtml(s.initials || s.name.slice(0, 2).toUpperCase())}</div>
               <div>
-                <strong style="font-size:13px;display:block;color:var(--ink);">${s.name}</strong>
-                <small style="color:var(--muted);">${s.id} · ${getStudentProgress(s, courseIndex)}% progress</small>
+                <strong style="font-size:13px;display:block;color:var(--ink);">${escapeHtml(s.name)}</strong>
+                <small style="color:var(--muted);">${escapeHtml(s.id)} · ${escapeHtml(getStudentProgress(s, courseIndex))}% progress</small>
               </div>
             </div>
-            <button class="modal-remove-student-btn" type="button" data-modal-remove-student="${s.id}">
+            <button class="modal-remove-student-btn" type="button" data-modal-remove-student="${escapeHtml(s.id)}">
               ✕ Remove
             </button>
           </div>
@@ -1655,7 +1716,7 @@ const openCourseStudentsModal = (courseIndex) => {
   const enrollBtn = document.querySelector('#btn-modal-enroll-student');
   if (selectEl && enrollBtn) {
     if (availableStudents.length) {
-      selectEl.innerHTML = availableStudents.map((s) => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
+      selectEl.innerHTML = availableStudents.map((s) => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)} (${escapeHtml(s.id)})</option>`).join('');
       enrollBtn.disabled = false;
       enrollBtn.style.opacity = '1';
     } else {
@@ -2160,7 +2221,7 @@ const renderScheduleTopicOptions = () => {
   }
   const options = classTopicOptions(courseIndex);
   scheduleTopicSelect.innerHTML = options.length
-    ? options.map((topic) => `<option value="${topic}">${topic}</option>`).join('')
+    ? options.map((topic) => `<option value="${escapeHtml(topic)}">${escapeHtml(topic)}</option>`).join('')
     : '<option value="">No unfinished topics available</option>';
 };
 

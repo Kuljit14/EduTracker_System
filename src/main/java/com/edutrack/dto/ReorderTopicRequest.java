@@ -1,6 +1,9 @@
 package com.edutrack.dto;
 
+import jakarta.validation.constraints.Min;
+
 public class ReorderTopicRequest {
+    @Min(value = 0, message = "Index cannot be negative")
     private int fromIndex;
     private int direction; // -1 for move up, 1 for move down
 

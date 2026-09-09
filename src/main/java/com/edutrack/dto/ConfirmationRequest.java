@@ -1,12 +1,34 @@
 package com.edutrack.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class ConfirmationRequest {
+    @NotBlank(message = "Student ID cannot be blank")
+    @Size(max = 50, message = "Student ID must not exceed 50 characters")
     private String studentId;
+
+    @NotBlank(message = "Student name cannot be blank")
+    @Size(max = 100, message = "Student name must not exceed 100 characters")
     private String student;
+
+    @NotNull(message = "Course index is required")
+    @Min(value = 0, message = "Course index cannot be negative")
     private Integer courseIndex;
+
+    @NotBlank(message = "Topic cannot be blank")
+    @Size(max = 150, message = "Topic must not exceed 150 characters")
     private String topic;
+
+    @Size(max = 1000, message = "Comment must not exceed 1000 characters")
     private String comment;
+
+    @Size(max = 50, message = "Date must not exceed 50 characters")
     private String date;
+
+    @Size(max = 50, message = "SubmittedAt must not exceed 50 characters")
     private String submittedAt;
 
     public ConfirmationRequest() {
