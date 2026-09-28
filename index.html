@@ -194,46 +194,30 @@
   </section>
   <div class="shell">
     <aside>
-      <div class="brand">
+      <div class="brand" title="AIMT Tracker">
         <img src="logo.jpg" alt="AIMT Logo" class="brand-logo">
         <span>AIMT Tracker</span>
       </div>
-      <div class="portal-badge" id="portal-badge">
+      <div class="portal-badge" id="portal-badge" title="Active Account Profile">
         <span class="portal-badge-role" id="portal-role-label">STUDENT PORTAL</span>
         <span class="portal-badge-name" id="portal-user-name">Welcome</span>
       </div>
       <div class="nav-label student-only">Student Workspace</div>
-      <nav class="nav student-only"><button class="active" data-page="dashboard"><span>▦</span><span>Dashboard</span></button><button
-          data-page="courses"><span>▤</span><span>My Courses</span></button><button
-          data-page="calendar"><span>◷</span><span>Attendance</span></button><button
-          data-page="results"><span>◈</span><span>Results</span></button></nav>
+      <nav class="nav student-only"><button class="active" data-page="dashboard" title="Dashboard"><span>▦</span><span>Dashboard</span></button><button
+          data-page="courses" title="My Courses"><span>▤</span><span>My Courses</span></button><button
+          data-page="calendar" title="Attendance"><span>◷</span><span>Attendance</span></button><button
+          data-page="results" title="Results"><span>◈</span><span>Results</span></button></nav>
       <div class="nav-label teacher-only" style="display:none">Teacher Workspace</div>
       <nav class="nav teacher-only" style="display:none"><button class="active"
-          data-page="students"><span>♙</span><span>Students</span></button><button
-          data-page="teacher-courses"><span>▤</span><span>Courses</span></button><button
-          data-page="topic-manager"><span>☷</span><span>Manage Topics</span></button><button
-          data-page="reports"><span>◫</span><span>Reports</span></button><button
-          data-page="schedule-manager"><span>◷</span><span>Class Schedule</span></button></nav>
+          data-page="students" title="Students"><span>♙</span><span>Students</span></button><button
+          data-page="teacher-courses" title="Courses"><span>▤</span><span>Courses</span></button><button
+          data-page="topic-manager" title="Manage Topics"><span>☷</span><span>Manage Topics</span></button><button
+          data-page="reports" title="Reports"><span>◫</span><span>Reports</span></button><button
+          data-page="schedule-manager" title="Class Schedule"><span>◷</span><span>Class Schedule</span></button></nav>
       <div class="help"><b>Need assistance?</b>Talk to the AIMT institute office for account or course support.<br><a
           href="#">Contact support →</a></div>
     </aside>
     <main>
-      <!-- Mobile Top Bar for Phone / Tablet -->
-      <header class="mobile-header">
-        <div class="mobile-header-brand">
-          <img src="logo.jpg" alt="AIMT Logo" class="mobile-brand-logo">
-          <div class="mobile-brand-info">
-            <span class="mobile-brand-title">AIMT Tracker</span>
-            <span class="mobile-role-pill" id="mobile-role-pill">STUDENT</span>
-          </div>
-        </div>
-        <div class="mobile-header-actions">
-          <button class="mobile-action-btn" id="mobile-btn-password" title="Change Password" aria-label="Change Password">🔑</button>
-          <button class="mobile-action-btn mobile-logout-btn" id="mobile-btn-logout" title="Log out" aria-label="Log out">🚪</button>
-          <div class="mini-avatar mobile-user-avatar" id="mobile-avatar">ST</div>
-        </div>
-      </header>
-
       <header class="top">
         <div>
           <div class="crumb" id="crumb">Student portal / Overview</div>
@@ -767,53 +751,6 @@
         </div>
       </section>
     </main>
-
-    <!-- Mobile Bottom Navigation Bar -->
-    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
-      <!-- Student Mobile Tabs -->
-      <button class="mobile-nav-item student-only active" data-page="dashboard" type="button">
-        <span class="mobile-nav-icon">▦</span>
-        <span class="mobile-nav-label">Home</span>
-      </button>
-      <button class="mobile-nav-item student-only" data-page="courses" type="button">
-        <span class="mobile-nav-icon">▤</span>
-        <span class="mobile-nav-label">Courses</span>
-      </button>
-      <button class="mobile-nav-item student-only" data-page="calendar" type="button">
-        <span class="mobile-nav-icon">◷</span>
-        <span class="mobile-nav-label">Attendance</span>
-      </button>
-      <button class="mobile-nav-item student-only" data-page="results" type="button">
-        <span class="mobile-nav-icon">◈</span>
-        <span class="mobile-nav-label">Results</span>
-      </button>
-      <button class="mobile-nav-item student-only" id="mobile-nav-security" type="button" title="Change Password">
-        <span class="mobile-nav-icon">🔑</span>
-        <span class="mobile-nav-label">Security</span>
-      </button>
-
-      <!-- Teacher Mobile Tabs -->
-      <button class="mobile-nav-item teacher-only active" data-page="students" type="button" style="display:none">
-        <span class="mobile-nav-icon">♙</span>
-        <span class="mobile-nav-label">Students</span>
-      </button>
-      <button class="mobile-nav-item teacher-only" data-page="teacher-courses" type="button" style="display:none">
-        <span class="mobile-nav-icon">▤</span>
-        <span class="mobile-nav-label">Courses</span>
-      </button>
-      <button class="mobile-nav-item teacher-only" data-page="topic-manager" type="button" style="display:none">
-        <span class="mobile-nav-icon">☷</span>
-        <span class="mobile-nav-label">Topics</span>
-      </button>
-      <button class="mobile-nav-item teacher-only" data-page="reports" type="button" style="display:none">
-        <span class="mobile-nav-icon">◫</span>
-        <span class="mobile-nav-label">Reports</span>
-      </button>
-      <button class="mobile-nav-item teacher-only" data-page="schedule-manager" type="button" style="display:none">
-        <span class="mobile-nav-icon">◷</span>
-        <span class="mobile-nav-label">Schedule</span>
-      </button>
-    </nav>
   </div>
 
   <div class="modal-backdrop" id="course-students-modal" style="display:none;">

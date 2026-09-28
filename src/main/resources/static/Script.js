@@ -1382,10 +1382,6 @@ const setRole = (role, name = '') => {
   const avatarInitials = teacher ? 'TR' : (activeStudent ? activeStudent.initials : 'ST');
   const desktopAvatar = document.querySelector('#avatar');
   if (desktopAvatar) desktopAvatar.textContent = avatarInitials;
-  const mobileAvatar = document.querySelector('#mobile-avatar');
-  if (mobileAvatar) mobileAvatar.textContent = avatarInitials;
-  const mobileRolePill = document.querySelector('#mobile-role-pill');
-  if (mobileRolePill) mobileRolePill.textContent = teacher ? 'TEACHER' : 'STUDENT';
   showPage(teacher ? 'students' : 'dashboard');
 };
 
@@ -1653,12 +1649,6 @@ document.querySelector('#logout-button')?.addEventListener('click', () => {
   clearLoginAlert();
 });
 
-document.querySelector('#mobile-btn-logout')?.addEventListener('click', () => {
-  document.body.classList.remove('authenticated');
-  if (loginPasswordInput) loginPasswordInput.value = '';
-  clearLoginAlert();
-});
-
 // Change Password Modal & Flow
 const changePwModal = document.querySelector('#change-password-modal');
 const changePwAlert = document.querySelector('#change-pw-alert');
@@ -1696,8 +1686,6 @@ const closeChangePasswordModal = () => {
 };
 
 document.querySelector('#btn-open-change-password')?.addEventListener('click', openChangePasswordModal);
-document.querySelector('#mobile-btn-password')?.addEventListener('click', openChangePasswordModal);
-document.querySelector('#mobile-nav-security')?.addEventListener('click', openChangePasswordModal);
 document.querySelector('#btn-close-change-pw-modal')?.addEventListener('click', closeChangePasswordModal);
 document.querySelector('#btn-cancel-change-pw')?.addEventListener('click', closeChangePasswordModal);
 changePwModal?.addEventListener('click', (event) => {
