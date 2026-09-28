@@ -1242,6 +1242,33 @@ const openStudentDetail = (studentId) => {
 };
 
 let currentRole = 'student';
+let currentUserName = '';
+
+const getTimeGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) {
+    return 'Good morning';
+  } else if (hour >= 12 && hour < 17) {
+    return 'Good afternoon';
+  } else {
+    return 'Good evening';
+  }
+};
+
+const updateGreetingTitle = () => {
+  const titleEl = document.querySelector('#title');
+  if (!titleEl) return;
+  const teacher = currentRole === 'teacher';
+  if (teacher) {
+    const displayName = currentUserName || 'Teacher';
+    titleEl.textContent = `Welcome back, ${displayName}!`;
+  } else {
+    const displayName = activeStudent
+      ? activeStudent.name.split(' ')[0]
+      : (currentUserName ? currentUserName.split(' ')[0] : 'Student');
+    titleEl.textContent = `${getTimeGreeting()}, ${displayName}!`;
+  }
+};
 
 function showPage(page) {
   const teacherPages = ['students', 'student-detail', 'reports', 'topic-manager', 'schedule-manager', 'teacher-courses'];
@@ -1274,6 +1301,10 @@ function showPage(page) {
   const label = pageLabels[page] || `${page[0].toUpperCase()}${page.slice(1)}`;
   document.querySelector('#crumb').textContent = `${portal} / ${label}`;
 
+  if (currentRole === 'student' && page === 'dashboard') {
+    updateGreetingTitle();
+  }
+
   if (page === 'courses') {
     renderCourses();
   }
@@ -1288,6 +1319,7 @@ function showPage(page) {
 
 const setRole = (role, name = '') => {
   currentRole = role;
+  currentUserName = name;
   const teacher = role === 'teacher';
 
   const roleLabelEl = document.querySelector('#portal-role-label');
@@ -1340,16 +1372,13 @@ const setRole = (role, name = '') => {
     page.style.display = teacher ? '' : 'none';
   });
 
-  const displayName = teacher ? (name || 'Teacher') : (activeStudent ? activeStudent.name.split(' ')[0] : (name || 'Student'));
   const fullName = teacher ? (name || 'Faculty Member') : (activeStudent ? activeStudent.name : (name || 'Student'));
 
   if (userNameEl) {
     userNameEl.textContent = fullName;
   }
 
-  document.querySelector('#title').textContent = teacher
-    ? `Welcome back, ${displayName}!`
-    : `Good morning, ${displayName}!`;
+  updateGreetingTitle();
   const avatarInitials = teacher ? 'TR' : (activeStudent ? activeStudent.initials : 'ST');
   const desktopAvatar = document.querySelector('#avatar');
   if (desktopAvatar) desktopAvatar.textContent = avatarInitials;
@@ -1359,6 +1388,19 @@ const setRole = (role, name = '') => {
   if (mobileRolePill) mobileRolePill.textContent = teacher ? 'TEACHER' : 'STUDENT';
   showPage(teacher ? 'students' : 'dashboard');
 };
+
+// Periodic dynamic greeting update (every 30 seconds) and visibility change listener
+setInterval(() => {
+  if (currentRole === 'student') {
+    updateGreetingTitle();
+  }
+}, 30000);
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && currentRole === 'student') {
+    updateGreetingTitle();
+  }
+});
 
 // Navigation events
 document.querySelectorAll('[data-page]').forEach((button) => {

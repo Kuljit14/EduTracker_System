@@ -1866,629 +1866,6 @@ td {
     }
 }
 
-/* ==========================================================================
-   Mobile Header & Bottom Navigation (Hidden on Desktop)
-   ========================================================================== */
-.mobile-header {
-    display: none;
-}
-
-.mobile-bottom-nav {
-    display: none;
-}
-
-@media(max-width:768px) {
-    /* Full-width block layout override for authenticated mobile view */
-    body.authenticated .shell,
-    .shell {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-    }
-
-    body.authenticated aside,
-    aside {
-        display: none !important;
-    }
-
-    /* Show mobile header only when authenticated */
-    body.authenticated .mobile-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 14px;
-        background: #ffffff;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        margin-bottom: 14px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-        position: sticky;
-        top: 8px;
-        z-index: 100;
-    }
-
-    .mobile-header-brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
-    }
-
-    .mobile-brand-logo {
-        width: 36px;
-        height: 36px;
-        border-radius: 9px;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-
-    .mobile-brand-info {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.2;
-        min-width: 0;
-    }
-
-    .mobile-brand-title {
-        font-size: 15px;
-        font-weight: 800;
-        color: var(--ink);
-        letter-spacing: -0.2px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .mobile-role-pill {
-        font-size: 10px;
-        font-weight: 800;
-        color: var(--blue);
-        letter-spacing: 0.5px;
-    }
-
-    .mobile-header-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-    }
-
-    .mobile-action-btn {
-        border: 1px solid var(--line);
-        background: #f8fafc;
-        border-radius: 8px;
-        width: 40px;
-        height: 40px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        touch-action: manipulation;
-    }
-
-    .mobile-action-btn:active {
-        transform: scale(0.92);
-        background: #e2e8f0;
-    }
-
-    .mobile-logout-btn {
-        color: #ef4444;
-        border-color: #fecaca;
-        background: #fff5f5;
-    }
-
-    .mobile-user-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-        color: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 700;
-        flex-shrink: 0;
-    }
-
-    /* Fixed Mobile Bottom Navigation Bar */
-    body.authenticated .mobile-bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: calc(60px + env(safe-area-inset-bottom, 0px));
-        background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        border-top: 1px solid var(--line);
-        box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
-        z-index: 999;
-        justify-content: space-around;
-        align-items: center;
-        padding: 0 4px calc(env(safe-area-inset-bottom, 0px) + 2px);
-    }
-
-    .mobile-nav-item {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        height: 50px;
-        background: none;
-        border: none;
-        color: #64748b;
-        font-family: inherit;
-        cursor: pointer;
-        border-radius: 8px;
-        transition: all 0.15s ease;
-        padding: 4px 1px;
-        min-width: 0;
-        touch-action: manipulation;
-    }
-
-    .mobile-nav-item:active {
-        transform: scale(0.92);
-    }
-
-    .mobile-nav-icon {
-        font-size: 18px;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.2s ease;
-    }
-
-    .mobile-nav-label {
-        font-size: 9.5px;
-        font-weight: 600;
-        letter-spacing: -0.1px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-    }
-
-    .mobile-nav-item.active {
-        color: #2563eb;
-    }
-
-    .mobile-nav-item.active .mobile-nav-icon {
-        transform: translateY(-2px) scale(1.15);
-    }
-
-    .mobile-nav-item.active .mobile-nav-label {
-        font-weight: 800;
-    }
-
-    /* Main view spacing on mobile to avoid bottom nav overlap */
-    body.authenticated main,
-    main {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        box-sizing: border-box !important;
-        padding: 14px 12px calc(85px + env(safe-area-inset-bottom, 0px)) 12px !important;
-    }
-
-    .top {
-        margin-bottom: 14px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .top-actions {
-        display: none; /* Actions are conveniently accessible in .mobile-header */
-    }
-
-    /* Prevent mobile browser auto-zoom on inputs */
-    input, select, textarea {
-        font-size: 16px !important;
-    }
-
-    /* Hero section */
-    .hero {
-        padding: 18px 14px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .hero h2 {
-        font-size: 18px;
-    }
-
-    .hero-chip {
-        align-self: flex-start;
-        padding: 6px 12px;
-        font-size: 11.5px;
-    }
-
-    /* Metrics grid */
-    .metrics {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-    }
-
-    .metric {
-        padding: 12px;
-    }
-
-    .metric strong {
-        font-size: 20px;
-    }
-
-    /* Grids stack on mobile */
-    .dashboard-grid,
-    .topic-manager-grid,
-    .teacher-courses-grid {
-        grid-template-columns: 1fr !important;
-        gap: 14px !important;
-    }
-
-    /* Section row wrapping */
-    .section-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .section-row > button {
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-    }
-
-    /* Course Portal Navigation Tabs on Mobile */
-    .course-portal-tabs {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        white-space: nowrap;
-        flex-wrap: nowrap;
-        scrollbar-width: none;
-        padding-bottom: 2px;
-        margin-bottom: 14px;
-    }
-
-    .course-portal-tabs::-webkit-scrollbar {
-        display: none;
-    }
-
-    .course-portal-tab {
-        flex-shrink: 0;
-        white-space: nowrap;
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-
-    /* Course Catalog on Mobile */
-    .catalog-toolbar {
-        margin-bottom: 12px;
-    }
-
-    .catalog-search-input {
-        max-width: 100%;
-        width: 100%;
-    }
-
-    .catalog-grid {
-        grid-template-columns: 1fr !important;
-        gap: 14px !important;
-    }
-
-    .catalog-card {
-        padding: 16px !important;
-    }
-
-    .catalog-card-actions {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .catalog-card-actions .btn-apply-course,
-    .catalog-card-actions .btn-view-course-topics,
-    .catalog-card-actions .btn-drop-course {
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-        min-height: 44px;
-    }
-
-    /* Teacher Applications List on Mobile */
-    .application-item {
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-        padding: 12px 14px;
-    }
-
-    .application-right {
-        align-items: flex-start;
-        flex-direction: row;
-        justify-content: flex-end;
-    }
-
-    /* Tables horizontal scrolling without broken borders */
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 8px;
-    }
-
-    .table-card {
-        padding: 16px 12px !important;
-        overflow: hidden;
-    }
-
-    table {
-        min-width: 540px;
-    }
-
-    /* Filters and search */
-    .filters {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        width: 100%;
-    }
-
-    .search {
-        width: 100% !important;
-    }
-
-    .filter-group {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        width: 100%;
-    }
-
-    /* Teacher summary cards */
-    .teacher-summary {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
-    }
-
-    /* Batch Manager responsive */
-    .batch-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .batch-badges {
-        display: flex;
-        gap: 6px;
-    }
-
-    .batch-tabs {
-        display: flex;
-        width: 100%;
-        gap: 6px;
-    }
-
-    .batch-tab {
-        flex: 1;
-        padding: 8px 4px;
-        font-size: 11.5px;
-        justify-content: center;
-    }
-
-    .batch-toolbar {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .batch-toolbar-actions {
-        display: flex;
-        width: 100%;
-        gap: 8px;
-    }
-
-    .batch-select-btn {
-        flex: 1;
-        text-align: center;
-        padding: 8px 4px;
-    }
-
-    .batch-student-item {
-        padding: 10px;
-    }
-
-    /* Modals mobile optimization */
-    .modal-backdrop {
-        padding: 10px !important;
-        display: grid !important;
-        place-items: center !important;
-    }
-
-    .modal-box {
-        max-width: 100% !important;
-        width: 100% !important;
-        max-height: calc(100dvh - 20px) !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch;
-        padding: 18px 14px !important;
-        border-radius: 16px !important;
-        margin: auto !important;
-    }
-
-    /* Touch targets and buttons */
-    .confirm-button,
-    .secondary-button,
-    .table-action-btn,
-    .batch-quick-btn,
-    .btn-apply-course,
-    .btn-view-course-topics {
-        min-height: 44px;
-    }
-
-    .back-link {
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        padding: 8px 14px !important;
-        min-height: 44px !important;
-        border-radius: 8px !important;
-        background: #eff6ff !important;
-        margin-bottom: 14px !important;
-        font-size: 13px !important;
-        color: var(--blue) !important;
-    }
-
-    .chart {
-        gap: 8px !important;
-        padding: 10px 4px 0 !important;
-    }
-}
-
-@media(max-width:480px) {
-    html, body {
-        overflow-x: hidden !important;
-        width: 100% !important;
-        position: relative;
-    }
-
-    body.authenticated main,
-    main {
-        padding: 10px 8px calc(80px + env(safe-area-inset-bottom, 0px)) 8px !important;
-    }
-
-    .card {
-        padding: 16px 12px !important;
-        border-radius: 12px !important;
-    }
-
-    .metrics {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 8px !important;
-    }
-
-    .metric {
-        padding: 10px !important;
-    }
-
-    .metric strong {
-        font-size: 17px !important;
-    }
-
-    .metric-head label {
-        font-size: 10.5px !important;
-    }
-
-    .hero {
-        padding: 14px 10px !important;
-    }
-
-    .hero h2 {
-        font-size: 16px !important;
-    }
-
-    .chart {
-        gap: 5px !important;
-        padding: 8px 2px 0 !important;
-    }
-
-    .bar {
-        max-width: 24px !important;
-    }
-
-    .course-overview {
-        flex-direction: column-reverse !important;
-        align-items: flex-start !important;
-        gap: 12px !important;
-    }
-
-    .progress-ring {
-        align-self: flex-start !important;
-    }
-
-    .topic-item {
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .topic-status {
-        margin-left: 37px;
-        width: 100%;
-    }
-
-    .login-screen {
-        padding: 10px !important;
-    }
-
-    .login-container {
-        border-radius: 14px !important;
-    }
-
-    .login-form-wrapper {
-        padding: 22px 14px !important;
-    }
-
-    .login-title {
-        font-size: 20px !important;
-    }
-
-    .quick-access-buttons {
-        grid-template-columns: 1fr !important;
-    }
-
-    .mobile-bottom-nav {
-        height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
-    }
-
-    .mobile-nav-label {
-        font-size: 9px !important;
-    }
-
-    /* Stack modal and dialog actions on narrow phone screens */
-    #course-apply-form > div:last-child,
-    #post-notice-form > div:last-child,
-    #create-course-form > div:last-child,
-    #create-student-form > div:last-child,
-    #student-detail-form > div:last-child,
-    .modal-footer {
-        flex-direction: column-reverse !important;
-        display: flex !important;
-        gap: 8px !important;
-        width: 100% !important;
-    }
-
-    #course-apply-form button,
-    #post-notice-form button,
-    #create-course-form button,
-    #create-student-form button,
-    #student-detail-form button,
-    .modal-footer button {
-        width: 100% !important;
-        margin: 0 !important;
-        min-height: 44px !important;
-    }
-
-    #post-notice-form > div[style*="grid-template-columns"],
-    #create-course-form > div[style*="grid-template-columns"] {
-        grid-template-columns: 1fr !important;
-    }
-
-    .add-student-section > div {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 8px !important;
-    }
-
-    .add-student-section button {
-        width: 100% !important;
-    }
-}
 
 /* ==========================================================================
    Student Table Actions & Interactive Edit Row
@@ -3118,3 +2495,996 @@ td {
 }
 
 
+
+
+
+/* ==========================================================================
+   Mobile Header & Bottom Navigation (Hidden on Desktop)
+   ========================================================================== */
+.mobile-header {
+    display: none;
+}
+
+.mobile-bottom-nav {
+    display: none;
+}
+
+
+
+/* ==========================================================================
+   Mobile & Tablet Responsiveness (@media max-width: 768px)
+   Comprehensive layout optimization for both Student and Faculty Portals
+   Desktop (PC) view (>768px) remains 100% unaltered.
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Full-width block layout override for mobile view */
+    body.authenticated .shell,
+    .shell {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    body.authenticated aside,
+    aside {
+        display: none !important;
+    }
+
+    /* Mobile Header (Sticky, Authenticated) */
+    body.authenticated .mobile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        position: sticky;
+        top: 8px;
+        z-index: 100;
+    }
+
+    .mobile-header-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .mobile-brand-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .mobile-brand-info {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+        min-width: 0;
+    }
+
+    .mobile-brand-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--ink);
+        letter-spacing: -0.2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mobile-role-pill {
+        font-size: 10px;
+        font-weight: 800;
+        color: var(--blue);
+        letter-spacing: 0.5px;
+    }
+
+    .mobile-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .mobile-action-btn {
+        border: 1px solid var(--line);
+        background: #f8fafc;
+        border-radius: 8px;
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        touch-action: manipulation;
+    }
+
+    .mobile-action-btn:active {
+        transform: scale(0.92);
+        background: #e2e8f0;
+    }
+
+    .mobile-logout-btn {
+        color: #ef4444;
+        border-color: #fecaca;
+        background: #fff5f5;
+    }
+
+    .mobile-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    /* Fixed Mobile Bottom Navigation Bar */
+    body.authenticated .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: calc(58px + env(safe-area-inset-bottom, 0px));
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-top: 1px solid var(--line);
+        box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+        z-index: 999;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 4px calc(env(safe-area-inset-bottom, 0px) + 2px);
+    }
+
+    .mobile-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        height: 50px;
+        background: none;
+        border: none;
+        color: #64748b;
+        font-family: inherit;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.15s ease;
+        padding: 4px 1px;
+        min-width: 0;
+        touch-action: manipulation;
+    }
+
+    .mobile-nav-item:active {
+        transform: scale(0.92);
+    }
+
+    .mobile-nav-icon {
+        font-size: 18px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease;
+    }
+
+    .mobile-nav-label {
+        font-size: 9.5px;
+        font-weight: 600;
+        letter-spacing: -0.1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .mobile-nav-item.active {
+        color: #2563eb;
+    }
+
+    .mobile-nav-item.active .mobile-nav-icon {
+        transform: translateY(-2px) scale(1.15);
+    }
+
+    .mobile-nav-item.active .mobile-nav-label {
+        font-weight: 800;
+    }
+
+    /* Main Container Spacing */
+    body.authenticated main,
+    main {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 12px 10px calc(80px + env(safe-area-inset-bottom, 0px)) 10px !important;
+    }
+
+    /* Top Greeting Bar */
+    .top {
+        margin-bottom: 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .top-actions {
+        display: none;
+    }
+
+    .crumb {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    h1#title, h1 {
+        font-size: 21px !important;
+        line-height: 1.25;
+        margin: 2px 0 0;
+        word-break: break-word;
+    }
+
+    /* Prevent mobile browser auto-zoom on inputs */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+
+    /* --------------------------------------------------------------------------
+       Student Portal Mobile Styles
+       -------------------------------------------------------------------------- */
+    /* Hero section */
+    .hero {
+        padding: 16px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        border-radius: 12px;
+    }
+
+    .hero h2 {
+        font-size: 17px;
+    }
+
+    .hero p {
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    .hero-chip {
+        align-self: flex-start;
+        padding: 6px 12px;
+        font-size: 11.5px;
+        border-radius: 20px;
+    }
+
+    /* Metrics grid */
+    .metrics {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+        margin: 12px 0;
+    }
+
+    .metric {
+        padding: 10px 12px;
+        border-radius: 10px;
+        min-width: 0;
+    }
+
+    .metric strong {
+        font-size: 18px !important;
+    }
+
+    .metric-head label {
+        font-size: 11px;
+    }
+
+    /* Today's schedule row */
+    .schedule-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 10px 0;
+    }
+
+    .schedule-row .schedule-time {
+        align-self: flex-start;
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: #eff6ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+
+    /* Notice Board */
+    .notice-board-card {
+        margin-top: 14px !important;
+    }
+
+    .notice-item {
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
+
+    .notice-header {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .notice-title {
+        font-size: 13.5px;
+        word-break: break-word;
+    }
+
+    .notice-content {
+        font-size: 12px;
+        word-break: break-word;
+    }
+
+    /* Grids stacking */
+    .dashboard-grid,
+    .course-detail-grid,
+    .topic-manager-grid,
+    .teacher-courses-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .section-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .section-row > button {
+        width: 100% !important;
+        text-align: center;
+        justify-content: center;
+        min-height: 44px;
+    }
+
+    /* Course Portal Tabs */
+    .course-portal-tabs {
+        display: flex;
+        width: 100%;
+        gap: 6px;
+        border-bottom: 2px solid var(--line);
+        margin-bottom: 14px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .course-portal-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .course-portal-tab {
+        flex: 1;
+        justify-content: center;
+        padding: 9px 8px;
+        font-size: 12px;
+        border-radius: 8px 8px 0 0;
+        white-space: nowrap;
+    }
+
+    .catalog-toolbar {
+        margin-bottom: 12px;
+    }
+
+    .catalog-search-input {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 42px;
+    }
+
+    .catalog-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .catalog-card {
+        padding: 14px !important;
+        border-radius: 12px;
+    }
+
+    .catalog-card-actions {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .catalog-card-actions .btn-apply-course,
+    .catalog-card-actions .btn-view-course-topics,
+    .catalog-card-actions .btn-drop-course {
+        width: 100% !important;
+        min-height: 44px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .course.course-button {
+        padding: 14px 12px;
+        min-height: 52px;
+    }
+
+    /* Course Detail Page */
+    .back-link {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 9px 14px !important;
+        min-height: 44px !important;
+        border-radius: 8px !important;
+        background: #eff6ff !important;
+        margin-bottom: 14px !important;
+        font-size: 13px !important;
+        color: var(--blue) !important;
+        font-weight: 700 !important;
+        border: 1px solid #bfdbfe !important;
+    }
+
+    .course-overview {
+        flex-direction: column-reverse !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .progress-ring {
+        align-self: flex-start !important;
+    }
+
+    .topic-item {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+
+    .topic-status {
+        margin-left: 36px;
+        width: auto;
+        align-self: flex-start;
+        font-size: 10.5px;
+    }
+
+    .confirmation-form button {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    .chart {
+        gap: 6px !important;
+        padding: 10px 2px 0 !important;
+    }
+
+    .bar {
+        max-width: 24px !important;
+    }
+
+    /* --------------------------------------------------------------------------
+       Faculty / Teacher Portal Mobile Styles
+       -------------------------------------------------------------------------- */
+    /* Students Roster */
+    .teacher-summary {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+        gap: 8px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .summary {
+        padding: 12px 14px;
+        border-radius: 10px;
+    }
+
+    .summary strong {
+        font-size: 20px;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+    }
+
+    #btn-add-student-toggle {
+        width: 100% !important;
+        min-height: 44px;
+        justify-content: center;
+        font-size: 13px;
+    }
+
+    .search, #search {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    .select, #course-filter {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    #create-student-form > div:last-child {
+        flex-direction: column-reverse;
+        display: flex;
+        gap: 8px;
+        width: 100%;
+    }
+
+    #create-student-form button {
+        width: 100% !important;
+        min-height: 44px;
+        margin: 0 !important;
+    }
+
+    .table-action-btn {
+        min-height: 38px;
+        padding: 8px 12px;
+        font-size: 11.5px;
+    }
+
+    /* Student Detail */
+    #student-detail-form > div:last-child {
+        flex-direction: column-reverse;
+        display: flex;
+        gap: 8px;
+        width: 100%;
+    }
+
+    #student-detail-form button {
+        width: 100% !important;
+        min-height: 44px;
+        margin: 0 !important;
+    }
+
+    #student-override-form button {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    .enrollment-list {
+        max-height: 180px;
+        overflow-y: auto;
+    }
+
+    /* Courses Management */
+    #btn-create-course-toggle {
+        width: 100% !important;
+        min-height: 44px;
+        justify-content: center;
+    }
+
+    #create-course-form > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    #create-course-form > div:last-child {
+        flex-direction: column-reverse;
+        display: flex;
+        gap: 8px;
+        width: 100%;
+    }
+
+    #create-course-form button {
+        width: 100% !important;
+        min-height: 44px;
+        margin: 0 !important;
+    }
+
+    .teacher-courses-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .course-manage-card {
+        padding: 14px !important;
+        border-radius: 12px;
+    }
+
+    .course-manage-top {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .course-manage-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .course-action-btn {
+        width: 100% !important;
+        min-height: 44px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Curriculum & Topic Manager */
+    .teacher-topic-item {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        align-items: center !important;
+        padding: 12px 14px !important;
+    }
+
+    .teacher-topic-item > div:first-child {
+        width: 100% !important;
+        margin-bottom: 2px;
+    }
+
+    .teacher-topic-item .topic-status {
+        margin-left: 0 !important;
+    }
+
+    .teacher-topic-item .remove-topic {
+        min-height: 38px !important;
+        padding: 8px 12px !important;
+        font-size: 11.5px !important;
+        touch-action: manipulation;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #add-topic-form button,
+    #course-settings-form button {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    /* Batch Student Enrollments Manager */
+    .batch-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .batch-badges {
+        display: flex;
+        gap: 6px;
+    }
+
+    .batch-tabs {
+        display: flex;
+        width: 100%;
+        gap: 6px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .batch-tab {
+        flex: 1;
+        padding: 9px 4px;
+        font-size: 12px;
+        justify-content: center;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .batch-toolbar {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .batch-toolbar-actions {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .batch-select-btn {
+        flex: 1;
+        text-align: center;
+        padding: 9px 6px;
+        min-height: 40px;
+        font-size: 12px;
+    }
+
+    .batch-student-item {
+        padding: 10px 12px;
+        gap: 8px;
+    }
+
+    .batch-student-left {
+        flex: 1;
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .batch-student-left input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .batch-student-meta {
+        min-width: 0;
+    }
+
+    .batch-student-name {
+        font-size: 12.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+    }
+
+    .batch-student-sub {
+        font-size: 10.5px;
+        flex-wrap: wrap;
+        gap: 4px;
+        display: flex;
+    }
+
+    .batch-quick-btn {
+        min-height: 36px;
+        padding: 6px 10px;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+
+    #remove-enrolled,
+    #add-enrolled {
+        width: 100% !important;
+        min-height: 44px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    /* Schedule Manager */
+    #add-schedule-form button {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    /* Reports & Applications */
+    .application-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+
+    .application-left {
+        min-width: 0;
+        gap: 10px;
+    }
+
+    .application-body {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .application-student-name {
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 12.5px;
+    }
+
+    .application-quote {
+        word-break: break-word;
+        overflow-wrap: break-word;
+        font-size: 11.5px;
+        margin-top: 6px;
+    }
+
+    .application-right {
+        align-self: flex-start;
+    }
+
+    #btn-toggle-post-notice {
+        width: 100% !important;
+        min-height: 44px;
+        justify-content: center;
+    }
+
+    #post-notice-card > form > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    #post-notice-form > div:last-child {
+        flex-direction: column-reverse;
+        display: flex;
+        gap: 8px;
+        width: 100%;
+    }
+
+    #post-notice-form button {
+        width: 100% !important;
+        min-height: 44px;
+        margin: 0 !important;
+    }
+
+    /* --------------------------------------------------------------------------
+       Modals on Mobile
+       -------------------------------------------------------------------------- */
+    .modal-backdrop {
+        padding: 10px !important;
+        display: grid !important;
+        place-items: center !important;
+        z-index: 1100 !important;
+    }
+
+    .modal-box {
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: calc(100dvh - 20px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding: 18px 14px !important;
+        border-radius: 16px !important;
+        margin: auto !important;
+    }
+
+    .add-student-section > div {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+    }
+
+    .add-student-section button {
+        width: 100% !important;
+        min-height: 44px;
+    }
+
+    #change-password-form > div:last-child,
+    #course-apply-form > div:last-child,
+    .modal-footer {
+        flex-direction: column-reverse !important;
+        display: flex !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+
+    #change-password-form button,
+    #course-apply-form button,
+    .modal-footer button {
+        width: 100% !important;
+        min-height: 44px !important;
+        margin: 0 !important;
+    }
+
+    /* Tables horizontal scrolling */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    .table-card {
+        padding: 16px 12px !important;
+        overflow: hidden;
+    }
+
+    table {
+        min-width: 520px;
+    }
+}
+
+/* ==========================================================================
+   Narrow Mobile Phones (@media max-width: 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        position: relative;
+    }
+
+    body.authenticated main,
+    main {
+        padding: 10px 8px calc(76px + env(safe-area-inset-bottom, 0px)) 8px !important;
+    }
+
+    .card {
+        padding: 14px 10px !important;
+        border-radius: 12px !important;
+    }
+
+    h1#title, h1 {
+        font-size: 19px !important;
+    }
+
+    .hero {
+        padding: 14px 10px !important;
+    }
+
+    .hero h2 {
+        font-size: 15.5px !important;
+    }
+
+    .hero p {
+        font-size: 12px !important;
+    }
+
+    .metrics {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+
+    .metric {
+        padding: 9px 8px !important;
+    }
+
+    .metric strong {
+        font-size: 16.5px !important;
+    }
+
+    .metric-head label {
+        font-size: 10px !important;
+    }
+
+    .chart {
+        gap: 4px !important;
+        padding: 8px 1px 0 !important;
+    }
+
+    .bar {
+        max-width: 22px !important;
+    }
+
+    .login-screen {
+        padding: 10px !important;
+    }
+
+    .login-container {
+        border-radius: 14px !important;
+    }
+
+    .login-form-wrapper {
+        padding: 20px 12px !important;
+    }
+
+    .login-title {
+        font-size: 20px !important;
+    }
+
+    .quick-access-buttons {
+        grid-template-columns: 1fr !important;
+    }
+
+    .mobile-bottom-nav {
+        height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    .mobile-nav-label {
+        font-size: 9px !important;
+    }
+
+    .course-portal-tab {
+        font-size: 11px !important;
+        padding: 8px 4px !important;
+    }
+
+    .course-portal-tab span:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .batch-tab {
+        font-size: 11px !important;
+        padding: 8px 2px !important;
+    }
+}
