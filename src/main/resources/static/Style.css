@@ -38,6 +38,31 @@ aside {
     gap: 28px
 }
 
+.sidebar-backdrop {
+    display: none;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.sidebar-close-btn {
+    display: none;
+}
+
+.mobile-menu-btn {
+    display: none;
+}
+
+.top-left-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .brand {
     font-family: 'Plus Jakarta Sans';
     font-weight: 800;
@@ -2452,150 +2477,263 @@ td {
 /* ==========================================================================
 
 /* ==========================================================================
-   Mobile & Tablet Responsiveness: Compact Persistent Sidebar Layout
-   The desktop sidebar stays visible on the left in compact icon+label format.
+   Mobile & Tablet Responsiveness (@media max-width: 768px)
+   Full-width fluid workspace with smooth off-canvas slide-out sidebar drawer.
    Desktop view (> 768px) remains 100% pixel-perfect and untouched.
    ========================================================================== */
 @media (max-width: 768px) {
-    /* Persistent Sidebar Grid Layout */
+    /* Full-width Shell */
     .shell {
-        display: grid !important;
-        grid-template-columns: 72px 1fr !important;
-        min-height: 100vh !important;
+        display: block !important;
         width: 100% !important;
         max-width: 100% !important;
+        min-height: 100vh !important;
+        position: relative !important;
     }
 
-    /* Compact Persistent Sidebar on the Left */
+    body.authenticated .shell {
+        display: block !important;
+    }
+
+    /* Off-Canvas Slide-out Navigation Drawer */
+    aside#app-sidebar,
     aside {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 72px !important;
-        min-width: 72px !important;
-        max-width: 72px !important;
-        padding: 16px 6px !important;
-        gap: 16px !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        bottom: 0 !important;
+        width: 280px !important;
+        max-width: 82vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
         background: #202846 !important;
         color: #d4daf4 !important;
-        align-items: center !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-        position: sticky !important;
-        top: 0 !important;
-        height: 100vh !important;
+        z-index: 1200 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.35) !important;
+        padding: 20px 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
         overflow-y: auto !important;
-        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
         box-sizing: border-box !important;
-        z-index: 50 !important;
     }
 
-    /* Brand Logo Centered */
-    .brand {
-        padding: 0 !important;
-        justify-content: center !important;
+    aside#app-sidebar.mobile-open,
+    aside.mobile-open {
+        transform: translateX(0) !important;
+    }
+
+    /* Backdrop overlay when drawer is open */
+    .sidebar-backdrop {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(15, 23, 42, 0.55) !important;
+        backdrop-filter: blur(3px) !important;
+        -webkit-backdrop-filter: blur(3px) !important;
+        z-index: 1150 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity 0.25s ease !important;
+    }
+
+    .sidebar-backdrop.active {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    /* Drawer Header */
+    .sidebar-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
         width: 100% !important;
-        gap: 0 !important;
+        padding-bottom: 6px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .brand {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 0 !important;
     }
 
     .brand span {
-        display: none !important;
+        display: block !important;
+        font-size: 16px !important;
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        letter-spacing: -0.2px !important;
     }
 
     .brand-logo {
-        width: 38px !important;
-        height: 38px !important;
+        width: 36px !important;
+        height: 36px !important;
         border-radius: 50% !important;
     }
 
-    /* Compact Portal Badge */
-    .portal-badge {
-        padding: 6px 4px !important;
-        border-radius: 8px !important;
-        width: 100% !important;
-        text-align: center !important;
+    .sidebar-close-btn {
+        display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 2px !important;
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 50% !important;
+        border: 0 !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        transition: background 0.15s ease !important;
+    }
+
+    .sidebar-close-btn:hover,
+    .sidebar-close-btn:active {
+        background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Portal Badge in Drawer */
+    .portal-badge {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 10px 12px !important;
+        border-radius: 10px !important;
         background: #2b3558 !important;
+        width: 100% !important;
+        text-align: left !important;
+        align-items: flex-start !important;
+        gap: 3px !important;
+        box-sizing: border-box !important;
     }
 
     .portal-badge-role {
-        font-size: 8.5px !important;
-        letter-spacing: 0.5px !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        max-width: 100% !important;
+        font-size: 10px !important;
+        letter-spacing: 0.8px !important;
+        color: #93c5fd !important;
+        font-weight: 700 !important;
         display: block !important;
     }
 
     .portal-badge-name {
-        font-size: 10.5px !important;
-        max-width: 100% !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        font-size: 13.5px !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
         display: block !important;
     }
 
-    .nav-label {
-        display: none !important;
-    }
-
-    /* Compact Navigation Buttons (Icon + Micro-label) */
+    /* Navigation inside Drawer */
     .nav {
         width: 100% !important;
-        gap: 8px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+
+    .nav-label {
+        display: block !important;
+        font-size: 11px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.8px !important;
+        color: #8e9bbd !important;
+        font-weight: 700 !important;
+        margin: 8px 0 4px !important;
     }
 
     .nav button {
         display: flex !important;
-        flex-direction: column !important;
+        flex-direction: row !important;
         align-items: center !important;
-        justify-content: center !important;
-        padding: 8px 2px !important;
-        gap: 4px !important;
+        justify-content: flex-start !important;
+        padding: 11px 14px !important;
+        gap: 12px !important;
         border-radius: 10px !important;
         width: 100% !important;
-        min-height: 52px !important;
-        text-align: center !important;
+        min-height: 46px !important;
+        text-align: left !important;
+        color: #c9d2f2 !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
         transition: all 0.15s ease !important;
     }
 
     .nav button span:first-child {
-        font-size: 18px !important;
+        font-size: 17px !important;
         line-height: 1 !important;
+        width: 22px !important;
+        text-align: center !important;
+        flex-shrink: 0 !important;
     }
 
     .nav button span:last-child {
-        font-size: 9.5px !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.1px !important;
-        line-height: 1.15 !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: normal !important;
+        line-height: 1.2 !important;
         white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        max-width: 100% !important;
     }
 
     .nav button.active {
         background: #353f65 !important;
         color: #ffffff !important;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
     }
 
     .nav button:active {
-        transform: scale(0.94) !important;
+        transform: scale(0.98) !important;
     }
 
     .help {
-        display: none !important;
+        display: block !important;
+        font-size: 11.5px !important;
+        color: #8e9bbd !important;
+        margin-top: auto !important;
+        padding-top: 14px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 
-    /* Main Workspace Sitting Alongside Sidebar */
+    /* Main Workspace Takes 100% Screen Width */
     main {
-        padding: 16px 14px 45px 14px !important;
+        padding: 18px 16px 40px 16px !important;
         min-width: 0 !important;
         width: 100% !important;
+        max-width: 100% !important;
         box-sizing: border-box !important;
+    }
+
+    /* Mobile Hamburger Menu Button */
+    .mobile-menu-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        border-radius: 10px !important;
+        background: #ffffff !important;
+        border: 1.5px solid var(--line) !important;
+        font-size: 22px !important;
+        color: var(--ink) !important;
+        cursor: pointer !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+        transition: background 0.15s ease, transform 0.1s ease !important;
+    }
+
+    .mobile-menu-btn:active {
+        transform: scale(0.94) !important;
+        background: #f1f5f9 !important;
+    }
+
+    .top-left-group {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        min-width: 0 !important;
+        flex: 1 !important;
     }
 
     /* Top Header Bar */
@@ -2608,13 +2746,8 @@ td {
         flex-wrap: wrap !important;
     }
 
-    .top > div:first-child {
-        min-width: 0 !important;
-        flex: 1 !important;
-    }
-
     .crumb {
-        font-size: 12px !important;
+        font-size: 11.5px !important;
         color: var(--muted) !important;
         white-space: nowrap !important;
         overflow: hidden !important;
@@ -2622,7 +2755,7 @@ td {
     }
 
     h1#title, h1 {
-        font-size: 20px !important;
+        font-size: 19px !important;
         font-weight: 800 !important;
         margin: 2px 0 0 !important;
         line-height: 1.25 !important;
@@ -3341,52 +3474,24 @@ td {
     }
 
     .shell {
-        grid-template-columns: 60px 1fr !important;
-    }
-
-    aside {
-        width: 60px !important;
-        min-width: 60px !important;
-        max-width: 60px !important;
-        padding: 14px 4px !important;
-        gap: 12px !important;
-    }
-
-    .brand-logo {
-        width: 32px !important;
-        height: 32px !important;
-    }
-
-    .portal-badge {
-        padding: 4px 2px !important;
-        border-radius: 6px !important;
-    }
-
-    .portal-badge-role {
-        font-size: 7.5px !important;
-    }
-
-    .portal-badge-name {
-        font-size: 9.5px !important;
-    }
-
-    .nav button {
-        min-height: 48px !important;
-        padding: 6px 2px !important;
-        gap: 3px !important;
-        border-radius: 8px !important;
-    }
-
-    .nav button span:first-child {
-        font-size: 16px !important;
-    }
-
-    .nav button span:last-child {
-        font-size: 8.5px !important;
+        display: block !important;
+        width: 100% !important;
     }
 
     main {
-        padding: 12px 8px 36px 8px !important;
+        padding: 14px 12px 36px 12px !important;
+    }
+
+    .top-left-group {
+        gap: 10px !important;
+    }
+
+    .mobile-menu-btn {
+        width: 38px !important;
+        height: 38px !important;
+        min-width: 38px !important;
+        font-size: 20px !important;
+        border-radius: 9px !important;
     }
 
     .top {

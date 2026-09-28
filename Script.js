@@ -1270,7 +1270,25 @@ const updateGreetingTitle = () => {
   }
 };
 
+// Mobile Navigation Drawer Toggle Controls
+const openMobileMenu = () => {
+  const sidebar = document.querySelector('#app-sidebar') || document.querySelector('aside');
+  const backdrop = document.querySelector('#sidebar-backdrop');
+  if (sidebar) sidebar.classList.add('mobile-open');
+  if (backdrop) backdrop.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+const closeMobileMenu = () => {
+  const sidebar = document.querySelector('#app-sidebar') || document.querySelector('aside');
+  const backdrop = document.querySelector('#sidebar-backdrop');
+  if (sidebar) sidebar.classList.remove('mobile-open');
+  if (backdrop) backdrop.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
 function showPage(page) {
+  closeMobileMenu();
   const teacherPages = ['students', 'student-detail', 'reports', 'topic-manager', 'schedule-manager', 'teacher-courses'];
   const studentPages = ['dashboard', 'courses', 'course-detail', 'calendar', 'results'];
 
@@ -1401,6 +1419,16 @@ document.addEventListener('visibilitychange', () => {
 // Navigation events
 document.querySelectorAll('[data-page]').forEach((button) => {
   button.addEventListener('click', () => showPage(button.dataset.page));
+});
+
+// Mobile Navigation Drawer Events
+document.querySelector('#mobile-menu-btn')?.addEventListener('click', openMobileMenu);
+document.querySelector('#sidebar-close-btn')?.addEventListener('click', closeMobileMenu);
+document.querySelector('#sidebar-backdrop')?.addEventListener('click', closeMobileMenu);
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768) {
+    closeMobileMenu();
+  }
 });
 
 document.querySelector('#course-list')?.addEventListener('click', (event) => {

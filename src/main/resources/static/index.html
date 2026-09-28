@@ -193,10 +193,14 @@
     </div>
   </section>
   <div class="shell">
-    <aside>
-      <div class="brand" title="AIMT Tracker">
-        <img src="logo.jpg" alt="AIMT Logo" class="brand-logo">
-        <span>AIMT Tracker</span>
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <aside id="app-sidebar">
+      <div class="sidebar-header">
+        <div class="brand" title="AIMT Tracker">
+          <img src="logo.jpg" alt="AIMT Logo" class="brand-logo">
+          <span>AIMT Tracker</span>
+        </div>
+        <button class="sidebar-close-btn" id="sidebar-close-btn" type="button" aria-label="Close navigation">✕</button>
       </div>
       <div class="portal-badge" id="portal-badge" title="Active Account Profile">
         <span class="portal-badge-role" id="portal-role-label">STUDENT PORTAL</span>
@@ -219,9 +223,12 @@
     </aside>
     <main>
       <header class="top">
-        <div>
-          <div class="crumb" id="crumb">Student portal / Overview</div>
-          <h1 id="title">Welcome!</h1>
+        <div class="top-left-group">
+          <button class="mobile-menu-btn" id="mobile-menu-btn" type="button" aria-label="Open Navigation">☰</button>
+          <div>
+            <div class="crumb" id="crumb">Student portal / Overview</div>
+            <h1 id="title">Welcome!</h1>
+          </div>
         </div>
         <div class="top-actions">
           <button class="top-action-btn" id="btn-open-change-password" title="Change Password">🔑 Password</button>
