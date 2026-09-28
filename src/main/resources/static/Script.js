@@ -23,6 +23,7 @@ const schedulesStorageKey = 'aimtTrack-schedules';
 const confirmationsStorageKey = 'aimtTrack-confirmations';
 const teacherAuthStorageKey = 'aimtTrack-teacher-auth';
 const noticesStorageKey = 'aimtTrack-notices';
+const applicationsStorageKey = 'aimtTrack-course-applications';
 
 const loadStorageItem = (key, fallbackKey) => {
   return localStorage.getItem(key) || (fallbackKey ? localStorage.getItem(fallbackKey) : null);
@@ -39,6 +40,36 @@ let courses = JSON.parse(loadStorageItem(topicsStorageKey, 'eduTrack-course-topi
 const isoToday = new Date().toISOString().slice(0, 10);
 let schedules = JSON.parse(loadStorageItem(schedulesStorageKey, 'eduTrack-schedules') || 'null') || [];
 let confirmations = JSON.parse(loadStorageItem(confirmationsStorageKey, 'eduTrack-confirmations') || 'null') || [];
+
+// Course Applications Storage & Defaults
+const defaultCourseApplications = [
+  {
+    id: 'app-init-1',
+    studentId: 'STU-001',
+    studentName: 'Aarav Sharma',
+    studentInitials: 'AS',
+    courseIndex: 0,
+    courseName: 'Full Stack Web Development',
+    courseShortName: 'FSWD',
+    schedule: 'Monday, 10:00',
+    message: 'Hello Faculty, I have registered for this course batch and am excited to attend upcoming classes!',
+    date: '2026-09-12',
+    time: '11:20 AM',
+    status: 'Enrolled',
+  },
+];
+
+let courseApplications = [];
+try {
+  const rawApps = localStorage.getItem(applicationsStorageKey);
+  courseApplications = rawApps ? JSON.parse(rawApps) : defaultCourseApplications;
+} catch (e) {
+  courseApplications = defaultCourseApplications;
+}
+
+const saveCourseApplications = () => {
+  localStorage.setItem(applicationsStorageKey, JSON.stringify(courseApplications));
+};
 
 // Teacher Authentication Storage
 const defaultTeacherAuth = {
@@ -257,19 +288,55 @@ async function loadBackendData() {
   renderAllViews();
 }
 
-// Student Portal Views
+// Student Portal Views & Course Navigation
+let activeCoursePortalTab = 'enrolled';
+
+const setCoursePortalTab = (tab) => {
+  activeCoursePortalTab = tab;
+  const tabEnrolled = document.querySelector('#tab-enrolled-courses');
+  const tabCatalog = document.querySelector('#tab-catalog-courses');
+  const panelEnrolled = document.querySelector('#panel-enrolled-courses');
+  const panelCatalog = document.querySelector('#panel-catalog-courses');
+
+  if (tab === 'catalog') {
+    tabEnrolled?.classList.remove('active');
+    tabCatalog?.classList.add('active');
+    if (panelEnrolled) panelEnrolled.style.display = 'none';
+    if (panelCatalog) panelCatalog.style.display = 'block';
+    renderCourseCatalog();
+  } else {
+    tabCatalog?.classList.remove('active');
+    tabEnrolled?.classList.add('active');
+    if (panelCatalog) panelCatalog.style.display = 'none';
+    if (panelEnrolled) panelEnrolled.style.display = 'block';
+  }
+};
+
 const renderCourses = () => {
   const container = document.querySelector('#course-list');
+  const badgeEnrolled = document.querySelector('#badge-enrolled-count');
+  const badgeCatalog = document.querySelector('#badge-catalog-count');
+
+  if (badgeCatalog) badgeCatalog.textContent = String(courses.length);
+
   if (!container) return;
   if (!activeStudent) {
+    if (badgeEnrolled) badgeEnrolled.textContent = '0';
     container.innerHTML = '<p class="empty-state">No student profile active. Please sign in with your student name.</p>';
+    renderCourseCatalog();
     return;
   }
-  const enrolledCourses = courses.filter((course, index) => isEnrolled(activeStudent, index));
-  container.innerHTML = enrolledCourses.length
-    ? courses
-        .map((course, index) => {
-          if (!isEnrolled(activeStudent, index)) return '';
+
+  const enrolledIndices = courses
+    .map((_, index) => index)
+    .filter((index) => isEnrolled(activeStudent, index));
+
+  if (badgeEnrolled) badgeEnrolled.textContent = String(enrolledIndices.length);
+
+  container.innerHTML = enrolledIndices.length
+    ? enrolledIndices
+        .map((index) => {
+          const course = courses[index];
           const prog = getStudentProgress(activeStudent, index);
           const sched = getStudentSchedule(activeStudent, index);
           return `
@@ -285,7 +352,351 @@ const renderCourses = () => {
         </button>`;
         })
         .join('')
-    : '<p class="empty-state">You are not enrolled in any courses yet.</p>';
+    : `
+        <div class="empty-enrolled-box">
+          <div class="empty-enrolled-icon">📚</div>
+          <h4 class="empty-enrolled-title">You haven’t enrolled in any courses yet</h4>
+          <p class="empty-enrolled-sub">Explore AIMT Institute’s course offerings, view class schedules, and enroll to notify your instructor.</p>
+          <button class="btn-apply-course" id="btn-goto-explore-courses" type="button" style="display:inline-flex;width:auto;margin:0 auto;">
+            🔍 Explore Course Catalog
+          </button>
+        </div>
+      `;
+
+  renderCourseCatalog();
+};
+
+const renderCourseCatalog = (query) => {
+  const container = document.querySelector('#available-course-catalog');
+  if (!container) return;
+
+  const searchInput = document.querySelector('#catalog-search');
+  const term = (query !== undefined ? query : (searchInput?.value || '')).trim().toLowerCase();
+
+  const filtered = courses
+    .map((course, index) => ({ course, index }))
+    .filter(({ course }) => {
+      if (!term) return true;
+      const nameMatch = (course.name || '').toLowerCase().includes(term);
+      const descMatch = (course.description || '').toLowerCase().includes(term);
+      const shortMatch = (course.shortName || '').toLowerCase().includes(term);
+      const topicMatch = (course.topics || []).some((t) => (t.name || '').toLowerCase().includes(term));
+      return nameMatch || descMatch || shortMatch || topicMatch;
+    });
+
+  if (!filtered.length) {
+    container.innerHTML = `<p class="empty-state" style="grid-column: 1 / -1; padding: 24px; text-align: center;">No courses found matching "${escapeHtml(term)}". Try another search keyword.</p>`;
+    return;
+  }
+
+  container.innerHTML = filtered
+    .map(({ course, index }) => {
+      const enrolled = isEnrolled(activeStudent, index);
+      const sched = getStudentSchedule(activeStudent, index);
+      const topicsCount = Array.isArray(course.topics) ? course.topics.length : 0;
+      const enrolledPeers = studentRecords.filter((s) => isEnrolled(s, index)).length;
+      const shortCode = escapeHtml(course.shortName || (course.name || 'CRSE').slice(0, 4).toUpperCase());
+
+      const statusBadge = enrolled
+        ? '<span class="catalog-status-badge status-enrolled">✓ Enrolled &amp; Active</span>'
+        : '<span class="catalog-status-badge status-available">Open for Enrollment</span>';
+
+      const actionButtons = enrolled
+        ? `
+          <button class="btn-view-course-topics" type="button" data-open-course="${index}">View Lessons &amp; Progress</button>
+          <button class="btn-drop-course" type="button" data-drop-course="${index}" title="Drop this course">Drop</button>
+        `
+        : `
+          <button class="btn-apply-course" type="button" data-apply-course="${index}">+ Apply &amp; Enroll</button>
+          <button class="btn-view-course-topics" type="button" data-open-course="${index}" style="flex:0 0 auto;padding:9px 13px;" title="Preview Syllabus">Preview</button>
+        `;
+
+      return `
+        <div class="catalog-card ${enrolled ? 'enrolled-card' : ''}">
+          <div>
+            <div class="catalog-card-header">
+              <span class="catalog-course-code">${shortCode}</span>
+              ${statusBadge}
+            </div>
+            <h4 class="catalog-card-title">${escapeHtml(course.name)}</h4>
+            <p class="catalog-card-desc">${escapeHtml(course.description || 'AIMT Institute comprehensive curriculum with practical exercises and guided mentoring.')}</p>
+            <div class="catalog-meta-list">
+              <div class="catalog-meta-item">
+                <span class="catalog-meta-icon">⏰</span>
+                <span><b>Schedule:</b> ${escapeHtml(sched.day)}, ${escapeHtml(sched.time)}</span>
+              </div>
+              <div class="catalog-meta-item">
+                <span class="catalog-meta-icon">📖</span>
+                <span><b>Curriculum:</b> ${topicsCount} core module${topicsCount === 1 ? '' : 's'}</span>
+              </div>
+              <div class="catalog-meta-item">
+                <span class="catalog-meta-icon">👥</span>
+                <span><b>Enrolled Batch:</b> ${enrolledPeers} student${enrolledPeers === 1 ? '' : 's'}</span>
+              </div>
+            </div>
+          </div>
+          <div class="catalog-card-actions">
+            ${actionButtons}
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+};
+
+const renderTeacherApplications = () => {
+  const container = document.querySelector('#teacher-course-applications-list');
+  const countBadge = document.querySelector('#teacher-applications-count');
+  if (!container) return;
+
+  if (countBadge) {
+    countBadge.textContent = `${courseApplications.length} Application${courseApplications.length === 1 ? '' : 's'}`;
+  }
+
+  if (!courseApplications || !courseApplications.length) {
+    container.innerHTML = '<p class="empty-state">No student course applications submitted yet.</p>';
+    return;
+  }
+
+  container.innerHTML = courseApplications
+    .slice()
+    .reverse()
+    .map((app) => {
+      const initials = escapeHtml(app.studentInitials || 'ST');
+      const studentName = escapeHtml(app.studentName || 'Student');
+      const studentId = escapeHtml(app.studentId || '');
+      const courseName = escapeHtml(app.courseName || 'Course');
+      const dateStr = escapeHtml(app.date || isoToday);
+      const timeStr = escapeHtml(app.time || '');
+      const schedStr = app.schedule ? ` · Class Schedule: <b>${escapeHtml(app.schedule)}</b>` : '';
+      const messageHtml = app.message ? `<blockquote class="application-quote">“${escapeHtml(app.message)}”</blockquote>` : '';
+      const isDropped = (app.status || '').toLowerCase() === 'dropped';
+      const statusBadge = isDropped
+        ? '<span class="badge" style="background:#fee2e2;color:#b91c1c;font-weight:700;">Dropped</span>'
+        : '<span class="badge" style="background:#dcfce7;color:#15803d;font-weight:700;">Enrolled</span>';
+
+      return `
+        <div class="application-item">
+          <div class="application-left">
+            <div class="application-avatar" style="${isDropped ? 'background:#ef4444;' : ''}">${initials}</div>
+            <div class="application-body">
+              <div class="application-student-name">
+                <span>${studentName}</span>
+                <span style="font-size:11px;color:var(--muted);font-weight:400;">(${studentId})</span>
+                <span class="application-course-tag">${courseName}</span>
+              </div>
+              <div class="application-meta-time">
+                <span>📅 ${dateStr} ${timeStr}</span>
+                ${schedStr}
+              </div>
+              ${messageHtml}
+            </div>
+          </div>
+          <div class="application-right">
+            ${statusBadge}
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+};
+
+// Course Application & Enrollment Modal Logic
+const openCourseApplyModal = (courseIndex) => {
+  const course = courses[courseIndex];
+  if (!course) return;
+
+  const modal = document.querySelector('#course-apply-modal');
+  if (!modal) return;
+
+  const nameEl = document.querySelector('#apply-modal-course-name');
+  const subEl = document.querySelector('#apply-modal-course-sub');
+  const stuNameEl = document.querySelector('#apply-modal-student-name');
+  const stuIdEl = document.querySelector('#apply-modal-student-id');
+  const schedEl = document.querySelector('#apply-modal-schedule');
+  const topicsEl = document.querySelector('#apply-modal-topics-count');
+  const noteInput = document.querySelector('#apply-student-note');
+  const idxInput = document.querySelector('#apply-course-index');
+  const alertBox = document.querySelector('#course-apply-alert');
+
+  if (nameEl) nameEl.textContent = course.name;
+  if (subEl) subEl.textContent = course.description || 'AIMT Institute Course Batch';
+  if (stuNameEl) stuNameEl.textContent = activeStudent ? activeStudent.name : 'Unknown Student';
+  if (stuIdEl) stuIdEl.textContent = activeStudent ? activeStudent.id : '--';
+  const sched = getStudentSchedule(activeStudent, courseIndex);
+  if (schedEl) schedEl.textContent = `${sched.day}, ${sched.time}`;
+  if (topicsEl) topicsEl.textContent = `${(course.topics || []).length} Modules / Topics`;
+  if (noteInput) noteInput.value = '';
+  if (idxInput) idxInput.value = courseIndex;
+  if (alertBox) {
+    alertBox.style.display = 'none';
+    alertBox.textContent = '';
+  }
+
+  modal.style.display = 'grid';
+};
+
+const closeCourseApplyModal = () => {
+  const modal = document.querySelector('#course-apply-modal');
+  if (modal) modal.style.display = 'none';
+};
+
+const handleCourseApplySubmit = (e) => {
+  e.preventDefault();
+  const idxInput = document.querySelector('#apply-course-index');
+  const courseIndex = parseInt(idxInput?.value, 10);
+  const course = courses[courseIndex];
+  const alertBox = document.querySelector('#course-apply-alert');
+
+  if (!course || isNaN(courseIndex)) {
+    if (alertBox) {
+      alertBox.textContent = 'Invalid course selected.';
+      alertBox.style.display = 'block';
+    }
+    return;
+  }
+
+  if (!activeStudent) {
+    if (alertBox) {
+      alertBox.textContent = 'No active student session. Please log in first.';
+      alertBox.style.display = 'block';
+    }
+    return;
+  }
+
+  if (isEnrolled(activeStudent, courseIndex)) {
+    if (alertBox) {
+      alertBox.textContent = `You are already enrolled in ${course.name}.`;
+      alertBox.style.display = 'block';
+    }
+    return;
+  }
+
+  // Enroll active student
+  if (!Array.isArray(activeStudent.enrollments)) {
+    activeStudent.enrollments = [];
+  }
+  activeStudent.enrollments.push(courseIndex);
+
+  if (!activeStudent.progress) activeStudent.progress = {};
+  if (activeStudent.progress[courseIndex] === undefined) {
+    activeStudent.progress[courseIndex] = 0;
+  }
+
+  if (!activeStudent.completions) activeStudent.completions = {};
+  if (!activeStudent.completions[courseIndex]) {
+    activeStudent.completions[courseIndex] = [];
+  }
+
+  // Update in studentRecords
+  const stuIdx = studentRecords.findIndex((s) => s.id === activeStudent.id);
+  if (stuIdx !== -1) {
+    studentRecords[stuIdx] = activeStudent;
+  }
+  localStorage.setItem(studentsStorageKey, JSON.stringify(studentRecords));
+  localStorage.setItem('eduTrack-students', JSON.stringify(studentRecords));
+
+  // Create course application notification record
+  const noteVal = document.querySelector('#apply-student-note')?.value.trim();
+  const shouldNotify = document.querySelector('#apply-notify-checkbox')?.checked ?? true;
+  const sched = getStudentSchedule(activeStudent, courseIndex);
+  const initials = (activeStudent.name || 'ST')
+    .split(' ')
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  if (shouldNotify) {
+    const newApp = {
+      id: `app-${Date.now()}`,
+      studentId: activeStudent.id,
+      studentName: activeStudent.name,
+      studentInitials: initials || 'ST',
+      courseIndex,
+      courseName: course.name,
+      courseShortName: course.shortName || course.name.slice(0, 4).toUpperCase(),
+      schedule: `${sched.day}, ${sched.time}`,
+      message: noteVal || 'Enrolled in course via Student Portal.',
+      date: isoToday,
+      time: timeStr,
+      status: 'Enrolled',
+    };
+    courseApplications.push(newApp);
+    saveCourseApplications();
+  }
+
+  // Sync with Spring Boot backend endpoint POST /api/courses/{id}/enroll
+  fetch(`${API_BASE}/courses/${courseIndex}/enroll`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ studentIds: [activeStudent.id] }),
+  }).catch((err) => console.warn('Backend course enroll sync error:', err));
+
+  closeCourseApplyModal();
+  renderAllViews();
+  setCoursePortalTab('enrolled');
+
+  alert(`🎉 Success! You are now enrolled in "${course.name}". Your faculty instructor has been notified.`);
+};
+
+const handleDropCourse = (courseIndex) => {
+  const course = courses[courseIndex];
+  if (!course || !activeStudent) return;
+
+  const confirmed = confirm(
+    `Are you sure you want to drop "${course.name}"?\nYour learning progress will be preserved if you rejoin later.`
+  );
+  if (!confirmed) return;
+
+  activeStudent.enrollments = (activeStudent.enrollments || []).filter((idx) => idx !== courseIndex);
+
+  const stuIdx = studentRecords.findIndex((s) => s.id === activeStudent.id);
+  if (stuIdx !== -1) {
+    studentRecords[stuIdx] = activeStudent;
+  }
+  localStorage.setItem(studentsStorageKey, JSON.stringify(studentRecords));
+  localStorage.setItem('eduTrack-students', JSON.stringify(studentRecords));
+
+  // Log drop notification
+  const initials = (activeStudent.name || 'ST')
+    .split(' ')
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+  const sched = getStudentSchedule(activeStudent, courseIndex);
+
+  const dropApp = {
+    id: `app-drop-${Date.now()}`,
+    studentId: activeStudent.id,
+    studentName: activeStudent.name,
+    studentInitials: initials || 'ST',
+    courseIndex,
+    courseName: course.name,
+    courseShortName: course.shortName || course.name.slice(0, 4).toUpperCase(),
+    schedule: `${sched.day}, ${sched.time}`,
+    message: 'Student withdrew / dropped from this course.',
+    date: isoToday,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    status: 'Dropped',
+  };
+  courseApplications.push(dropApp);
+  saveCourseApplications();
+
+  // Call backend unenroll
+  fetch(`${API_BASE}/courses/${courseIndex}/unenroll`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ studentIds: [activeStudent.id] }),
+  }).catch((err) => console.warn('Backend unenroll error:', err));
+
+  renderAllViews();
 };
 
 const renderDashboardCourses = () => {
@@ -847,9 +1258,11 @@ function showPage(page) {
   const target = document.querySelector(`#${page}`);
   if (target) target.classList.add('active');
 
+  const activeNavPage = (page === 'course-detail') ? 'courses' : (page === 'student-detail') ? 'students' : page;
   document.querySelectorAll('[data-page]').forEach((button) => {
-    button.classList.toggle('active', button.dataset.page === page);
+    button.classList.toggle('active', button.dataset.page === activeNavPage);
   });
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
   const pageLabels = {
     'teacher-courses': 'Courses',
@@ -861,6 +1274,13 @@ function showPage(page) {
   const label = pageLabels[page] || `${page[0].toUpperCase()}${page.slice(1)}`;
   document.querySelector('#crumb').textContent = `${portal} / ${label}`;
 
+  if (page === 'courses') {
+    renderCourses();
+  }
+  if (page === 'reports') {
+    renderReports();
+    renderTeacherApplications();
+  }
   if (page === 'teacher-courses') {
     renderTeacherCourses();
   }
@@ -900,6 +1320,8 @@ const setRole = (role, name = '') => {
     updateStudentDashboardMetrics();
     renderNotices();
   } else {
+    renderReports();
+    renderTeacherApplications();
     renderNotices();
   }
 
@@ -944,11 +1366,50 @@ document.querySelectorAll('[data-page]').forEach((button) => {
 });
 
 document.querySelector('#course-list')?.addEventListener('click', (event) => {
+  const gotoBtn = event.target.closest('#btn-goto-explore-courses');
+  if (gotoBtn) {
+    setCoursePortalTab('catalog');
+    return;
+  }
   const courseButton = event.target.closest('[data-course]');
   if (!courseButton) return;
   renderCourseDetails(Number(courseButton.dataset.course));
   showPage('course-detail');
 });
+
+// Course Portal Tabs & Catalog Events
+document.querySelector('#tab-enrolled-courses')?.addEventListener('click', () => setCoursePortalTab('enrolled'));
+document.querySelector('#tab-catalog-courses')?.addEventListener('click', () => setCoursePortalTab('catalog'));
+document.querySelector('#catalog-search')?.addEventListener('input', (e) => renderCourseCatalog(e.target.value));
+
+document.querySelector('#available-course-catalog')?.addEventListener('click', (event) => {
+  const applyBtn = event.target.closest('[data-apply-course]');
+  if (applyBtn) {
+    openCourseApplyModal(Number(applyBtn.dataset.applyCourse));
+    return;
+  }
+  const openBtn = event.target.closest('[data-open-course]');
+  if (openBtn) {
+    renderCourseDetails(Number(openBtn.dataset.openCourse));
+    showPage('course-detail');
+    return;
+  }
+  const dropBtn = event.target.closest('[data-drop-course]');
+  if (dropBtn) {
+    handleDropCourse(Number(dropBtn.dataset.dropCourse));
+    return;
+  }
+});
+
+// Course Apply Modal Events
+document.querySelector('#btn-close-apply-modal')?.addEventListener('click', closeCourseApplyModal);
+document.querySelector('#btn-cancel-apply-modal')?.addEventListener('click', closeCourseApplyModal);
+document.querySelector('#course-apply-modal')?.addEventListener('click', (event) => {
+  if (event.target.id === 'course-apply-modal') {
+    closeCourseApplyModal();
+  }
+});
+document.querySelector('#course-apply-form')?.addEventListener('submit', handleCourseApplySubmit);
 
 let loginRole = 'student';
 const loginCard = document.querySelector('#login-card');
@@ -2317,6 +2778,7 @@ function renderAllViews() {
   renderTeacherSchedule();
   renderTeacherConfirmations();
   renderReports();
+  renderTeacherApplications();
   renderNotices();
   updateStudentDashboardMetrics();
 }

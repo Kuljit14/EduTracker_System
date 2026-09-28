@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AIMT Tracker | Student Progress Portal</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -337,9 +337,37 @@
       </section>
       <section id="courses" class="page student-page">
         <div class="card">
-          <h3 class="card-title">My courses</h3>
-          <p class="card-sub">Select a course to see your completed, current, and upcoming topics.</p>
-          <div id="course-list"></div>
+          <div class="course-portal-header">
+            <div>
+              <h3 class="card-title">Course Portal &amp; Enrollment</h3>
+              <p class="card-sub">Manage your enrolled courses or explore AIMT institute offerings to join new courses.</p>
+            </div>
+          </div>
+
+          <!-- Course Navigation Tabs -->
+          <div class="course-portal-tabs" role="tablist">
+            <button class="course-portal-tab active" id="tab-enrolled-courses" type="button" data-course-tab="enrolled">
+              <span>🎓 My Enrolled Courses</span>
+              <span class="course-tab-badge" id="badge-enrolled-count">0</span>
+            </button>
+            <button class="course-portal-tab" id="tab-catalog-courses" type="button" data-course-tab="catalog">
+              <span>🔍 Explore &amp; Apply Courses</span>
+              <span class="course-tab-badge" id="badge-catalog-count">0</span>
+            </button>
+          </div>
+
+          <!-- Tab 1: Enrolled Courses Panel -->
+          <div id="panel-enrolled-courses">
+            <div id="course-list"></div>
+          </div>
+
+          <!-- Tab 2: Available Courses Catalog Panel -->
+          <div id="panel-catalog-courses" style="display: none;">
+            <div class="catalog-toolbar">
+              <input class="form-input catalog-search-input" id="catalog-search" type="text" placeholder="Search available courses by name, topic, or instructor...">
+            </div>
+            <div class="catalog-grid" id="available-course-catalog"></div>
+          </div>
         </div>
       </section>
       <section id="course-detail" class="page student-page">
@@ -374,22 +402,24 @@
               <p class="card-sub">Your most recent marked assessments</p>
             </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Assessment</th>
-                <th>Course</th>
-                <th>Score</th>
-                <th>Grade</th>
-                <th>Feedback</th>
-              </tr>
-            </thead>
-            <tbody id="assessment-results-body">
-              <tr>
-                <td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No assessment results recorded yet.</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Assessment</th>
+                  <th>Course</th>
+                  <th>Score</th>
+                  <th>Grade</th>
+                  <th>Feedback</th>
+                </tr>
+              </thead>
+              <tbody id="assessment-results-body">
+                <tr>
+                  <td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No assessment results recorded yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
       <section id="students" class="page teacher-page">
@@ -428,19 +458,21 @@
               </select>
             </div>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>Course</th>
-                <th>Progress</th>
-                <th>Attendance</th>
-                <th>Status</th>
-                <th style="text-align:center;">Action</th>
-              </tr>
-            </thead>
-            <tbody id="student-table"></tbody>
-          </table>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Course</th>
+                  <th>Progress</th>
+                  <th>Attendance</th>
+                  <th>Status</th>
+                  <th style="text-align:center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="student-table"></tbody>
+            </table>
+          </div>
         </div>
       </section>
       <section id="student-detail" class="page teacher-page">
@@ -497,6 +529,19 @@
             <div class="notice" id="teacher-attention-notice" style="margin-top:22px"><b>All students</b> are currently on track.</div>
           </article>
         </div>
+        <article class="card" style="margin-top:23px">
+          <div class="section-row" style="margin-bottom:12px;">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:18px;">📥</span>
+                <h3 class="card-title" style="margin:0;">Student Course Enrollments &amp; Applications</h3>
+              </div>
+              <p class="card-sub" style="margin:2px 0 0;">Recent course enrollment requests and notes submitted by students.</p>
+            </div>
+            <span class="badge" id="teacher-applications-count" style="background:#dbeafe;color:#1d4ed8;font-weight:700;">0 Applications</span>
+          </div>
+          <div class="applications-list" id="teacher-course-applications-list"></div>
+        </article>
         <article class="card" style="margin-top:23px">
           <h3 class="card-title">Latest student learning confirmations</h3>
           <p class="card-sub">Read the topics students finished and their comments about each class.</p>
@@ -834,6 +879,54 @@
         <div style="display:flex;gap:10px;margin-top:16px;">
           <button class="confirm-button" type="submit">Save New Password</button>
           <button class="secondary-button" id="btn-cancel-change-pw" type="button" style="margin-top:0;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  <div class="modal-backdrop" id="course-apply-modal" style="display:none;">
+    <div class="modal-box" style="max-width:500px;">
+      <div class="modal-header">
+        <div>
+          <span class="badge" style="background:#e0e7ff;color:#4338ca;font-weight:700;">COURSE ENROLLMENT</span>
+          <h2 class="modal-title" id="apply-modal-course-name">Course Name</h2>
+          <p class="card-sub" style="margin:2px 0 0;" id="apply-modal-course-sub">Enroll in this course batch and notify faculty.</p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-apply-modal" type="button">✕</button>
+      </div>
+      <form id="course-apply-form" class="modal-body">
+        <div id="course-apply-alert" class="login-alert" style="display:none;margin-bottom:12px;"></div>
+        
+        <div class="apply-info-card" style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;">
+            <span style="color:var(--muted);">Enrolling Student:</span>
+            <strong id="apply-modal-student-name" style="color:var(--ink);">--</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;">
+            <span style="color:var(--muted);">Student ID:</span>
+            <strong id="apply-modal-student-id" style="color:var(--ink);">--</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;">
+            <span style="color:var(--muted);">Weekly Class Schedule:</span>
+            <strong id="apply-modal-schedule" style="color:#2563eb;">--</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;">
+            <span style="color:var(--muted);">Total Topics:</span>
+            <strong id="apply-modal-topics-count" style="color:var(--ink);">--</strong>
+          </div>
+        </div>
+
+        <label class="field-label" for="apply-student-note">Personal Message / Note for Teacher (Optional)</label>
+        <textarea class="form-input" id="apply-student-note" rows="3" placeholder="e.g. Hello Teacher, I would like to join this course batch and attend upcoming lectures."></textarea>
+
+        <div style="margin-top:10px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);">
+          <input type="checkbox" id="apply-notify-checkbox" checked style="accent-color:var(--blue);width:16px;height:16px;">
+          <label for="apply-notify-checkbox" style="cursor:pointer;margin:0;">Notify teacher of my enrollment in the Teacher Portal</label>
+        </div>
+
+        <input type="hidden" id="apply-course-index" value="">
+
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button class="confirm-button" type="submit" id="btn-confirm-course-apply">Confirm &amp; Join Course</button>
+          <button class="secondary-button" id="btn-cancel-apply-modal" type="button" style="margin-top:0;">Cancel</button>
         </div>
       </form>
     </div>
