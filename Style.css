@@ -69,6 +69,14 @@ aside {
     display: none;
 }
 
+.mobile-bottom-nav {
+    display: none;
+}
+
+.mobile-features-hub {
+    display: none;
+}
+
 .top-left-group {
     display: flex;
     align-items: center;
@@ -2558,9 +2566,171 @@ td {
         padding: 24px 20px !important;
     }
 
+    /* Mobile Login Screen: Student Portal Only */
+    .role-tab-btn[data-login-role="teacher"] {
+        display: none !important;
+    }
+
+    .quick-cred-chip[data-quick-fill="teacher"] {
+        display: none !important;
+    }
+
+    .role-tab-btn[data-login-role="student"] {
+        flex: 1 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        border-radius: 9px !important;
+    }
+
+    .login-role-selector {
+        grid-template-columns: 1fr !important;
+        margin-bottom: 14px !important;
+    }
+
     .quick-access-buttons {
         grid-template-columns: 1fr !important;
         gap: 8px !important;
+    }
+
+    /* Mobile Features Hub on Student Dashboard */
+    .mobile-features-hub {
+        display: block !important;
+        margin-bottom: 18px !important;
+    }
+
+    .mobile-hub-title {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 13.5px !important;
+        font-weight: 800 !important;
+        color: var(--ink) !important;
+        margin-bottom: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
+
+    .mobile-hub-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+
+    .mobile-hub-card {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        padding: 12px 10px !important;
+        background: #ffffff !important;
+        border: 1px solid var(--line) !important;
+        border-radius: 12px !important;
+        cursor: pointer !important;
+        text-align: left !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+        transition: all 0.15s ease !important;
+        font-family: inherit !important;
+    }
+
+    .mobile-hub-card:active {
+        background: #f1f5f9 !important;
+        transform: scale(0.98) !important;
+    }
+
+    .mobile-hub-icon {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 9px !important;
+        background: var(--blue-soft) !important;
+        color: var(--blue) !important;
+        display: grid !important;
+        place-items: center !important;
+        font-size: 16px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .mobile-hub-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+
+    .mobile-hub-info strong {
+        display: block !important;
+        font-size: 12.5px !important;
+        color: var(--ink) !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .mobile-hub-info span {
+        display: block !important;
+        font-size: 10.5px !important;
+        color: var(--muted) !important;
+        margin-top: 2px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .mobile-hub-arrow {
+        color: #94a3b8 !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Fixed Mobile Bottom Navigation Bar */
+    .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 58px !important;
+        background: #ffffff !important;
+        border-top: 1px solid var(--line) !important;
+        z-index: 999 !important;
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06) !important;
+        padding: 0 4px !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+    }
+
+    .mobile-nav-item {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        border: 0 !important;
+        background: transparent !important;
+        color: #64748b !important;
+        padding: 6px 2px !important;
+        cursor: pointer !important;
+        transition: color 0.15s ease !important;
+        border-radius: 8px !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--blue) !important;
+        font-weight: 700 !important;
+    }
+
+    .mobile-nav-icon {
+        font-size: 18px !important;
+        line-height: 1 !important;
+    }
+
+    .mobile-nav-label {
+        font-size: 10.5px !important;
+        line-height: 1 !important;
+        font-family: 'DM Sans', sans-serif !important;
+    }
+
+    body.authenticated main {
+        padding-bottom: 78px !important;
     }
 
     /* Full-width Shell */
@@ -3783,6 +3953,38 @@ td {
 
     .quick-access-buttons {
         grid-template-columns: 1fr !important;
+    }
+
+    .role-tab-btn[data-login-role="teacher"] {
+        display: none !important;
+    }
+
+    .quick-cred-chip[data-quick-fill="teacher"] {
+        display: none !important;
+    }
+
+    .mobile-hub-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+
+    .mobile-hub-card {
+        padding: 10px 8px !important;
+        gap: 6px !important;
+    }
+
+    .mobile-hub-icon {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 14px !important;
+    }
+
+    .mobile-hub-info strong {
+        font-size: 11.5px !important;
+    }
+
+    .mobile-hub-info span {
+        font-size: 9.5px !important;
     }
 
     .course-portal-tab {

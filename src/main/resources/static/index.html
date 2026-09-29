@@ -259,6 +259,46 @@
           </div>
           <div class="hero-chip"><strong id="student-overall-avg">0.0 / 10</strong><span>Overall average</span></div>
         </div>
+
+        <!-- Mobile Quick Features Hub (visible only on mobile) -->
+        <div class="mobile-features-hub">
+          <div class="mobile-hub-title"><span>⚡</span> Quick Academic Features</div>
+          <div class="mobile-hub-grid">
+            <button class="mobile-hub-card" type="button" data-page="courses">
+              <span class="mobile-hub-icon">▤</span>
+              <div class="mobile-hub-info">
+                <strong>My Courses</strong>
+                <span id="mobile-hub-courses-count">Explore &amp; Apply</span>
+              </div>
+              <span class="mobile-hub-arrow">→</span>
+            </button>
+            <button class="mobile-hub-card" type="button" data-page="calendar">
+              <span class="mobile-hub-icon">◷</span>
+              <div class="mobile-hub-info">
+                <strong>Attendance</strong>
+                <span id="mobile-hub-att-pct">Record &amp; Logs</span>
+              </div>
+              <span class="mobile-hub-arrow">→</span>
+            </button>
+            <button class="mobile-hub-card" type="button" data-page="results">
+              <span class="mobile-hub-icon">◈</span>
+              <div class="mobile-hub-info">
+                <strong>Results</strong>
+                <span>Grades &amp; Marks</span>
+              </div>
+              <span class="mobile-hub-arrow">→</span>
+            </button>
+            <button class="mobile-hub-card" type="button" id="mobile-hub-notices-btn">
+              <span class="mobile-hub-icon">📢</span>
+              <div class="mobile-hub-info">
+                <strong>Notice Board</strong>
+                <span id="mobile-hub-notices-count">Circulars &amp; News</span>
+              </div>
+              <span class="mobile-hub-arrow">↓</span>
+            </button>
+          </div>
+        </div>
+
         <div class="metrics">
           <div class="metric">
             <div class="metric-head"><label>Overall Progress</label>
@@ -772,6 +812,29 @@
         </div>
       </section>
     </main>
+    <!-- Fixed Mobile Bottom Navigation Bar (visible only on mobile) -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Navigation">
+      <button class="mobile-nav-item active" data-page="dashboard" type="button" aria-label="Dashboard">
+        <span class="mobile-nav-icon">▦</span>
+        <span class="mobile-nav-label">Dashboard</span>
+      </button>
+      <button class="mobile-nav-item" data-page="courses" type="button" aria-label="My Courses">
+        <span class="mobile-nav-icon">▤</span>
+        <span class="mobile-nav-label">Courses</span>
+      </button>
+      <button class="mobile-nav-item" data-page="calendar" type="button" aria-label="Attendance">
+        <span class="mobile-nav-icon">◷</span>
+        <span class="mobile-nav-label">Attendance</span>
+      </button>
+      <button class="mobile-nav-item" data-page="results" type="button" aria-label="Results">
+        <span class="mobile-nav-icon">◈</span>
+        <span class="mobile-nav-label">Results</span>
+      </button>
+      <button class="mobile-nav-item" id="mobile-nav-menu-btn" type="button" aria-label="Menu">
+        <span class="mobile-nav-icon">☰</span>
+        <span class="mobile-nav-label">Menu</span>
+      </button>
+    </nav>
   </div>
 
   <div class="modal-backdrop" id="course-students-modal" style="display:none;">

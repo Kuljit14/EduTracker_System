@@ -782,6 +782,14 @@ const updateStudentDashboardMetrics = () => {
   if (mNext) mNext.textContent = nextSched ? nextSched.date : 'None';
   const mNextSub = document.querySelector('#metric-next-assessment-sub');
   if (mNextSub) mNextSub.textContent = nextSched ? (courses[nextSched.courseIndex]?.shortName || 'Class') : 'Upcoming';
+
+  // Update Mobile Features Hub counters
+  const hubCourses = document.querySelector('#mobile-hub-courses-count');
+  if (hubCourses) hubCourses.textContent = enrolled.length ? `${enrolled.length} Enrolled` : 'Explore & Apply';
+  const hubAtt = document.querySelector('#mobile-hub-att-pct');
+  if (hubAtt) hubAtt.textContent = `${activeStudent.attendance ?? 100}% Logged`;
+  const hubNotices = document.querySelector('#mobile-hub-notices-count');
+  if (hubNotices) hubNotices.textContent = `${notices.length} Updates`;
 };
 
 const renderCourseDetails = (courseIndex) => {
@@ -1461,6 +1469,17 @@ document.querySelector('#avatar')?.addEventListener('click', () => {
   }
 });
 
+// Mobile Bottom Navigation Menu Button
+document.querySelector('#mobile-nav-menu-btn')?.addEventListener('click', openMobileMenu);
+
+// Mobile Dashboard Features Hub: Notice Board quick jump
+document.querySelector('#mobile-hub-notices-btn')?.addEventListener('click', () => {
+  const noticeCard = document.querySelector('.notice-board-card');
+  if (noticeCard) {
+    noticeCard.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
 document.querySelector('#course-list')?.addEventListener('click', (event) => {
   const gotoBtn = event.target.closest('#btn-goto-explore-courses');
   if (gotoBtn) {
@@ -1569,6 +1588,20 @@ document.querySelectorAll('[data-login-role]').forEach((button) => {
     }
   });
 });
+
+// Enforce Student Portal role on mobile devices (removes faculty option on mobile)
+const enforceMobileLoginRole = () => {
+  if (window.innerWidth <= 768) {
+    if (loginRole !== 'student') {
+      const studentRoleBtn = document.querySelector('[data-login-role="student"]');
+      if (studentRoleBtn) {
+        studentRoleBtn.click();
+      }
+    }
+  }
+};
+window.addEventListener('resize', enforceMobileLoginRole);
+enforceMobileLoginRole();
 
 // Show / Hide password visibility toggle
 document.querySelector('#btn-toggle-password')?.addEventListener('click', () => {
