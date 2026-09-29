@@ -206,6 +206,10 @@
         <span class="portal-badge-role" id="portal-role-label">STUDENT PORTAL</span>
         <span class="portal-badge-name" id="portal-user-name">Welcome</span>
       </div>
+      <div class="drawer-account-actions">
+        <button class="drawer-action-btn" id="drawer-btn-password" type="button">🔑 Change Password</button>
+        <button class="drawer-action-btn drawer-logout-btn" id="drawer-btn-logout" type="button">🚪 Log Out</button>
+      </div>
       <div class="nav-label student-only">Student Workspace</div>
       <nav class="nav student-only"><button class="active" data-page="dashboard" title="Dashboard"><span>▦</span><span>Dashboard</span></button><button
           data-page="courses" title="My Courses"><span>▤</span><span>My Courses</span></button><button
@@ -225,7 +229,11 @@
       <header class="top">
         <div class="top-left-group">
           <button class="mobile-menu-btn" id="mobile-menu-btn" type="button" aria-label="Open Navigation">☰</button>
-          <div>
+          <div class="mobile-nav-brand">
+            <img src="logo.jpg" alt="AIMT Logo" class="mobile-header-logo">
+            <span class="mobile-brand-title">AIMT Tracker</span>
+          </div>
+          <div class="desktop-heading-wrapper">
             <div class="crumb" id="crumb">Student portal / Overview</div>
             <h1 id="title">Welcome!</h1>
           </div>
@@ -237,6 +245,12 @@
           <div class="avatar" id="avatar">--</div>
         </div>
       </header>
+
+      <!-- Mobile In-Page Heading -->
+      <div class="mobile-page-header">
+        <div class="crumb" id="mobile-crumb">Student portal / Overview</div>
+        <h1 class="mobile-title" id="mobile-title">Welcome!</h1>
+      </div>
       <section id="dashboard" class="page active student-page">
         <div class="hero">
           <div>

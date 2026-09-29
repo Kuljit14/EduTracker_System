@@ -1257,17 +1257,20 @@ const getTimeGreeting = () => {
 
 const updateGreetingTitle = () => {
   const titleEl = document.querySelector('#title');
-  if (!titleEl) return;
+  const mobileTitleEl = document.querySelector('#mobile-title');
   const teacher = currentRole === 'teacher';
+  let greeting = '';
   if (teacher) {
     const displayName = currentUserName || 'Teacher';
-    titleEl.textContent = `Welcome back, ${displayName}!`;
+    greeting = `Welcome back, ${displayName}!`;
   } else {
     const displayName = activeStudent
       ? activeStudent.name.split(' ')[0]
       : (currentUserName ? currentUserName.split(' ')[0] : 'Student');
-    titleEl.textContent = `${getTimeGreeting()}, ${displayName}!`;
+    greeting = `${getTimeGreeting()}, ${displayName}!`;
   }
+  if (titleEl) titleEl.textContent = greeting;
+  if (mobileTitleEl) mobileTitleEl.textContent = greeting;
 };
 
 // Mobile Navigation Drawer Toggle Controls
@@ -1317,10 +1320,19 @@ function showPage(page) {
   };
   const portal = teacherPages.includes(page) ? 'Teacher portal' : 'Student portal';
   const label = pageLabels[page] || `${page[0].toUpperCase()}${page.slice(1)}`;
-  document.querySelector('#crumb').textContent = `${portal} / ${label}`;
+  const crumbText = `${portal} / ${label}`;
+  const desktopCrumb = document.querySelector('#crumb');
+  const mobileCrumb = document.querySelector('#mobile-crumb');
+  if (desktopCrumb) desktopCrumb.textContent = crumbText;
+  if (mobileCrumb) mobileCrumb.textContent = crumbText;
 
-  if (currentRole === 'student' && page === 'dashboard') {
+  const titleEl = document.querySelector('#title');
+  const mobileTitleEl = document.querySelector('#mobile-title');
+  if ((currentRole === 'student' && page === 'dashboard') || (currentRole === 'teacher' && page === 'students')) {
     updateGreetingTitle();
+  } else {
+    if (titleEl) titleEl.textContent = label;
+    if (mobileTitleEl) mobileTitleEl.textContent = label;
   }
 
   if (page === 'courses') {
@@ -1428,6 +1440,24 @@ document.querySelector('#sidebar-backdrop')?.addEventListener('click', closeMobi
 window.addEventListener('resize', () => {
   if (window.innerWidth > 768) {
     closeMobileMenu();
+  }
+});
+
+// Drawer Account Action Events
+document.querySelector('#drawer-btn-password')?.addEventListener('click', () => {
+  closeMobileMenu();
+  openChangePasswordModal();
+});
+
+document.querySelector('#drawer-btn-logout')?.addEventListener('click', () => {
+  closeMobileMenu();
+  document.querySelector('#logout-button')?.click();
+});
+
+// Mobile avatar click opens navigation drawer
+document.querySelector('#avatar')?.addEventListener('click', () => {
+  if (window.innerWidth <= 768) {
+    openMobileMenu();
   }
 });
 
